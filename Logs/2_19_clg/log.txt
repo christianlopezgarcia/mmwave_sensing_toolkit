@@ -1,0 +1,1109 @@
+readNumBytes:  37344
+allBinData:  2 1 4 3
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 270
+timestamp (cycles)  = 3532600318
+timestamp (seconds) = 17.663002
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          188          6
+    obj  1:    -0.026161     0.816449     0.183125     0.000000     0.837143    -1.835247           12          123          6
+    obj  2:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          118          6
+Parser result:  0
+totalBytesParsed:  704
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 271
+timestamp (cycles)  = 3572649566
+timestamp (seconds) = 17.863248
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          188          6
+    obj  1:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          122          6
+    obj  2:    -0.308696     4.772329    -1.234785     0.000000     4.939141    -3.701000          -14          115          5
+    obj  3:     3.570936     6.198772     2.618686     0.000000     7.617997    29.945019           20          122          4
+    obj  4:    -0.054937     0.107251    -0.035317     0.362085     0.125571   -27.123033          -16          195          5
+    obj  5:     0.023545     0.122342     0.015696     0.362085     0.125571    10.893395            7          195          5
+Parser result:  0
+totalBytesParsed:  1472
+headerStartIndex    = 0
+totalPacketNumBytes = 832
+platform            = b'000a6843'
+frameNumber         = 272
+timestamp (cycles)  = 3612692947
+timestamp (seconds) = 18.063465
+numDetObj           = 9
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 144 bytes
+The 2nd TLV
+    type 7
+    len 36 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          162          6
+    obj  1:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          113          6
+    obj  2:     1.464999     2.261350     1.988214     0.000000     3.348570    32.936891           36          171          6
+    obj  3:     3.570936     6.198772     2.618686     0.000000     7.617997    29.945019           20          124          4
+    obj  4:     0.418571     0.339404     0.397643     0.241390     0.669714    50.962660           36          266          5
+    obj  5:    -0.104643     0.582251     0.313928     0.241390     0.669714   -10.188505           27          266          5
+    obj  6:     0.240678     0.226860    -0.052321    -0.724169     0.334857    46.692902           -8          281          5
+    obj  7:     0.000000     0.324224    -0.083714    -0.724169     0.334857     0.000000          -14          281          5
+    obj  8:     0.058862     0.305854    -0.211902    -0.362085     0.376714    10.893395          -34          271          5
+Parser result:  0
+totalBytesParsed:  2304
+headerStartIndex    = 0
+totalPacketNumBytes = 736
+platform            = b'000a6843'
+frameNumber         = 273
+timestamp (cycles)  = 3652627672
+timestamp (seconds) = 18.263138
+numDetObj           = 4
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 64 bytes
+The 2nd TLV
+    type 7
+    len 16 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     1.464999     2.261350     1.988214     0.000000     3.348570    32.936891           36          146          6
+    obj  1:     0.028777     0.451346     0.086330     0.120695     0.460428     3.648108           10          159          7
+    obj  2:    -0.041857     0.578477     0.334857     0.120695     0.669714    -4.138564           29          173          6
+    obj  3:    -0.392411     0.489728     0.019621    -0.482780     0.627857   -38.704609            1          349          4
+Parser result:  0
+totalBytesParsed:  3040
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 274
+timestamp (cycles)  = 3692600812
+timestamp (seconds) = 18.463004
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.410006     0.201437     0.000000     0.460428    -7.990541           25          128          7
+    obj  1:     0.044473     0.586642     0.400259     0.000000     0.711571     4.335289           34          115          6
+    obj  2:     1.778928     2.121438     1.883571     0.000000     3.348570    39.981453           34          121          6
+Parser result:  0
+totalBytesParsed:  3744
+headerStartIndex    = 0
+totalPacketNumBytes = 864
+platform            = b'000a6843'
+frameNumber         = 275
+timestamp (cycles)  = 3732712914
+timestamp (seconds) = 18.663565
+numDetObj           = 10
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 160 bytes
+The 2nd TLV
+    type 7
+    len 40 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          152          6
+    obj  1:    -0.041857     0.578477     0.334857     0.000000     0.669714    -4.138564           29          124          6
+    obj  2:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          117          6
+    obj  3:     1.464999     2.261350     1.988214     0.000000     3.348570    32.936891           36          121          6
+    obj  4:     0.094179     0.489366     0.062786     0.241390     0.502286    10.893395            7          228          5
+    obj  5:     0.000000     5.064580    -1.135375     0.241390     5.190284     0.000000          -12          126          4
+    obj  6:     0.057554     0.455910     0.028777     0.362085     0.460428     7.194896            3          202          6
+    obj  7:    -0.555915     0.337235     0.289076    -0.965559     0.711571   -58.757735           23          283          4
+    obj  8:    -0.622625     0.242573    -0.244603    -0.965559     0.711571   -68.714262          -20          283          4
+    obj  9:    -0.066710     0.679582    -0.200129    -0.965559     0.711571    -5.606364          -16          283          4
+Parser result:  0
+totalBytesParsed:  4608
+headerStartIndex    = 0
+totalPacketNumBytes = 800
+platform            = b'000a6843'
+frameNumber         = 276
+timestamp (cycles)  = 3772679427
+timestamp (seconds) = 18.863397
+numDetObj           = 7
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 112 bytes
+The 2nd TLV
+    type 7
+    len 28 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          140          6
+    obj  1:     3.829927     6.186696     2.393704     0.000000     7.659855    31.759934           18          118          4
+    obj  2:    -0.497053     0.616326    -0.074558    -0.844864     0.795285   -38.885407           -5          285          4
+    obj  3:    -0.444732     0.555025     0.022237    -0.603474     0.711571   -38.704606            1          340          4
+    obj  4:     0.141268     0.477904     0.062786    -0.120695     0.502286    16.467616            7          171          6
+    obj  5:     0.000000     0.616239     0.355786    -0.120695     0.711571     0.000000           29          133          6
+    obj  6:     0.511442     0.163405     0.466969    -0.120695     0.711571    72.281383           41          133          6
+Parser result:  0
+totalBytesParsed:  5408
+headerStartIndex    = 0
+totalPacketNumBytes = 832
+platform            = b'000a6843'
+frameNumber         = 277
+timestamp (cycles)  = 3812694644
+timestamp (seconds) = 19.063473
+numDetObj           = 9
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 144 bytes
+The 2nd TLV
+    type 7
+    len 36 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.031393     0.464572     0.188357     0.000000     0.502286    -3.865813           22          132          6
+    obj  1:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          115          6
+    obj  2:     1.778928     2.209922     1.778928     0.000000     3.348570    38.833137           32          116          6
+    obj  3:    -0.431652     1.265851     0.345321    -0.362085     1.381285   -18.829231           14          182          4
+    obj  4:     2.134713     3.393687     1.467615    -0.362085     4.269427    32.170916           20          173          4
+    obj  5:    -0.933937     3.898958     1.467615    -0.362085     4.269427   -13.470543           20          173          4
+    obj  6:     2.609530     3.197484     1.510781    -0.362085     4.394999    39.218570           20          172          4
+    obj  7:    -0.686719     4.161310     1.236093    -0.362085     4.394998    -9.370757           16          172          4
+    obj  8:    -0.274687     0.555992     0.098103    -0.120695     0.627857   -26.291643            8          146          6
+Parser result:  0
+totalBytesParsed:  6240
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 278
+timestamp (cycles)  = 3852649255
+timestamp (seconds) = 19.263246
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     1.778928     2.121438     1.883571     0.000000     3.348570    39.981453           34          115          6
+    obj  1:    -0.235446     0.696460     0.164812     0.120695     0.753428   -18.678426           12          128          6
+    obj  2:     0.235446     0.608527     0.376714     0.120695     0.753428    21.152033           30          128          6
+    obj  3:    -0.313928     0.591209     0.020929     0.724169     0.669714   -27.968046            1          411          4
+    obj  4:    -0.274687     1.215206     0.156964    -0.241390     1.255714   -12.737185            7          130          5
+    obj  5:    -0.031393     0.480987     0.141268    -0.120695     0.502286    -3.734258           16          208          6
+Parser result:  0
+totalBytesParsed:  7008
+headerStartIndex    = 0
+totalPacketNumBytes = 832
+platform            = b'000a6843'
+frameNumber         = 279
+timestamp (cycles)  = 3892690702
+timestamp (seconds) = 19.463454
+numDetObj           = 8
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 128 bytes
+The 2nd TLV
+    type 7
+    len 32 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          120          7
+    obj  1:    -0.066710     0.612617     0.355786     0.000000     0.711571    -6.214629           30          172          6
+    obj  2:     1.464999     2.261350     1.988214     0.000000     3.348570    32.936891           36          124          6
+    obj  3:     0.187049     0.475517     0.187049     0.120695     0.544143    21.472653           20          134          6
+    obj  4:     2.197499     3.493501     1.510781     0.241390     4.394999    32.170916           20          115          4
+    obj  5:    -3.433593     2.289977     1.510781     0.241390     4.394999   -56.299356           20          115          4
+    obj  6:     0.170045     0.515771     0.034009     0.362085     0.544143    18.246884            3          344          4
+    obj  7:    -0.494437     0.566541    -0.047089     0.482780     0.753428   -41.112186           -3          208          5
+Parser result:  0
+totalBytesParsed:  7840
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 280
+timestamp (cycles)  = 3932669804
+timestamp (seconds) = 19.663349
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          154          6
+    obj  1:    -0.044473     0.601211     0.378022     0.000000     0.711571    -4.230616           32          179          6
+    obj  2:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          114          6
+    obj  3:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          132          6
+    obj  4:     0.128187     0.564429    -0.091562    -0.603474     0.586000    12.795400           -8          226          4
+    obj  5:     0.109875     0.483796     0.078482    -0.241390     0.502286    12.795400            8          268          5
+Parser result:  0
+totalBytesParsed:  8608
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 281
+timestamp (cycles)  = 3972599559
+timestamp (seconds) = 19.862998
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          121          7
+    obj  1:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          116          6
+    obj  2:    -0.031393     0.457895     0.204054     0.120695     0.502286    -3.922011           23          164          6
+Parser result:  0
+totalBytesParsed:  9312
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 282
+timestamp (cycles)  = 4012640319
+timestamp (seconds) = 20.063202
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.183125     0.810137     0.104643     0.000000     0.837142   -12.737185            7          116          6
+    obj  1:    -0.192281     0.853743     0.082406     0.000000     0.879000   -12.692451            5          121          6
+    obj  2:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          113          6
+    obj  3:    -0.635705     0.310575    -0.258991    -0.844864     0.753428   -63.962079          -20          357          4
+    obj  4:    -0.565071     0.410515     0.282536    -0.844864     0.753428   -54.002226           22          357          4
+    obj  5:    -0.047089     0.721481    -0.211902    -0.844864     0.753428    -3.734258          -16          357          4
+Parser result:  0
+totalBytesParsed:  10080
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 283
+timestamp (cycles)  = 4052671025
+timestamp (seconds) = 20.263355
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          156          6
+    obj  1:     0.000000     0.602854     0.378022     0.000000     0.711571     0.000000           32          151          6
+    obj  2:    -0.054937     0.941982    -1.483312     0.000000     1.757999    -3.337777          -57          112          6
+    obj  3:     1.446687     2.319860     1.860026     0.000000     3.306713    31.948059           34          121          6
+    obj  4:     3.570936     6.294039     2.380624     0.000000     7.617997    29.568501           18          127          4
+    obj  5:     0.102027     0.534222    -0.017004    -0.362085     0.544143    10.812267           -1          299          4
+Parser result:  0
+totalBytesParsed:  10848
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 284
+timestamp (cycles)  = 4092646937
+timestamp (seconds) = 20.463235
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.219750     0.834977     0.164812     0.000000     0.879000   -14.744784           10          124          6
+    obj  1:     0.219750     0.805542     0.274687     0.000000     0.879000    15.258876           18          124          6
+    obj  2:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          116          6
+    obj  3:     1.569642     2.190012     1.988214     0.000000     3.348570    35.630217           36          114          6
+    obj  4:    -0.031393     0.442572     0.235446     0.120695     0.502286    -4.057348           27          185          6
+    obj  5:    -0.153040     0.515210     0.085022     0.482780     0.544143   -16.543751            8          257          4
+Parser result:  0
+totalBytesParsed:  11616
+headerStartIndex    = 0
+totalPacketNumBytes = 832
+platform            = b'000a6843'
+frameNumber         = 285
+timestamp (cycles)  = 4132683935
+timestamp (seconds) = 20.663420
+numDetObj           = 8
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 128 bytes
+The 2nd TLV
+    type 7
+    len 32 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          160          6
+    obj  1:    -1.067357     3.864565     1.467615     0.241390     4.269427   -15.439656           20          161          4
+    obj  2:     2.401553     3.145987     1.601035     0.241390     4.269427    37.357032           22          161          4
+    obj  3:    -1.098750     4.027708     1.373437     0.241390     4.394999   -15.258876           18          168          4
+    obj  4:     2.746874     3.143941     1.373437     0.241390     4.394998    41.143846           18          168          4
+    obj  5:    -0.313928     0.590096     0.041857     0.724169     0.669714   -28.012763            3          319          4
+    obj  6:    -0.153040     0.517729     0.068018    -0.603474     0.544143   -16.467615            7          324          4
+    obj  7:     0.015696     0.465367     0.188357    -0.241390     0.502286     1.931806           22          245          5
+Parser result:  0
+totalBytesParsed:  12448
+headerStartIndex    = 0
+totalPacketNumBytes = 736
+platform            = b'000a6843'
+frameNumber         = 286
+timestamp (cycles)  = 4172624851
+timestamp (seconds) = 20.863124
+numDetObj           = 4
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 64 bytes
+The 2nd TLV
+    type 7
+    len 16 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.044473     0.614632     0.355786     0.000000     0.711571    -4.138564           29          212          6
+    obj  1:    -0.261607     0.788301     0.104643     0.000000     0.837143   -18.359028            7          133          6
+    obj  2:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          122          6
+    obj  3:     4.047061     5.998984     2.380624     0.000000     7.617998    34.004562           18          117          4
+Parser result:  0
+totalBytesParsed:  13184
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 287
+timestamp (cycles)  = 4212668390
+timestamp (seconds) = 21.063342
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          148          6
+    obj  1:    -0.044473     0.601211     0.378022     0.000000     0.711571    -4.230616           32          184          6
+    obj  2:    -0.209286     0.808869     0.052321     0.000000     0.837143   -14.506493            3          120          6
+    obj  3:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          136          6
+    obj  4:    -0.039241     0.411564    -0.065402    -0.724169     0.418571    -5.446474           -8          212          6
+    obj  5:    -0.039241     0.413430     0.052321    -0.482780     0.418571    -5.422031            7          231          5
+Parser result:  0
+totalBytesParsed:  13952
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 288
+timestamp (cycles)  = 4252643245
+timestamp (seconds) = 21.263216
+numDetObj           = 5
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 80 bytes
+The 2nd TLV
+    type 7
+    len 20 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          184          6
+    obj  1:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          116          6
+    obj  2:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          156          6
+    obj  3:    -0.128187     0.255556     0.064094    -0.603474     0.293000   -26.638436           12          286          5
+    obj  4:     0.000000     1.179192     0.431652    -0.362085     1.255714     0.000000           20          122          5
+Parser result:  0
+totalBytesParsed:  14720
+headerStartIndex    = 0
+totalPacketNumBytes = 768
+platform            = b'000a6843'
+frameNumber         = 289
+timestamp (cycles)  = 4292648778
+timestamp (seconds) = 21.463244
+numDetObj           = 6
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 96 bytes
+The 2nd TLV
+    type 7
+    len 24 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.057554     0.125898     0.094179     0.000000     0.167429   -24.567242           34          196          6
+    obj  1:    -0.054937     0.941982    -1.483312     0.000000     1.757999    -3.337777          -57          115          6
+    obj  2:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          153          6
+    obj  3:    -0.154348     4.779811    -1.234785     0.000000     4.939141    -1.849535          -14          123          5
+    obj  4:    -0.078482     0.114032    -0.094179    -0.362085     0.167429   -34.537584          -34          213          5
+    obj  5:    -0.088946     0.133804     0.047089    -0.362085     0.167429   -33.614077           16          213          5
+Parser result:  0
+totalBytesParsed:  15488
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 290
+timestamp (cycles)  = 37617373
+timestamp (seconds) = 0.188087
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.062786     0.136838     0.073250     0.000000     0.167429   -24.647147           25          176          6
+    obj  1:     1.464999     2.164867     2.092856     0.000000     3.348570    34.086823           38          139          6
+Parser result:  0
+totalBytesParsed:  16192
+headerStartIndex    = 0
+totalPacketNumBytes = 672
+platform            = b'000a6843'
+frameNumber         = 291
+timestamp (cycles)  = 77587460
+timestamp (seconds) = 0.387937
+numDetObj           = 1
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 16 bytes
+The 2nd TLV
+    type 7
+    len 4 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.054937     0.941982    -1.483312     0.000000     1.757999    -3.337777          -57          122          6
+Parser result:  0
+totalBytesParsed:  16864
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 292
+timestamp (cycles)  = 117613155
+timestamp (seconds) = 0.588066
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.000000     0.943582    -1.483312     0.000000     1.757999     0.000000          -57          115          6
+    obj  1:     1.360357     2.232108     2.092856     0.000000     3.348570    31.360192           38          117          6
+Parser result:  0
+totalBytesParsed:  17568
+headerStartIndex    = 0
+totalPacketNumBytes = 736
+platform            = b'000a6843'
+frameNumber         = 293
+timestamp (cycles)  = 157652411
+timestamp (seconds) = 0.788262
+numDetObj           = 4
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 64 bytes
+The 2nd TLV
+    type 7
+    len 16 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.735572     0.298232     0.000000     0.795285     3.865813           22          118          6
+    obj  1:    -0.054937     1.023372    -1.428374     0.000000     1.757999    -3.072849          -54          118          6
+    obj  2:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          144          6
+    obj  3:     1.179848     2.497083     2.037919     0.000000     3.432284    25.290287           36          130          6
+Parser result:  0
+totalBytesParsed:  18304
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 294
+timestamp (cycles)  = 197614896
+timestamp (seconds) = 0.988074
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.736830     0.298232     0.000000     0.795285     1.931806           22          150          6
+    obj  1:     1.151071     2.517959     1.883571     0.000000     3.348570    24.567243           34          129          6
+Parser result:  0
+totalBytesParsed:  19008
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 295
+timestamp (cycles)  = 237616974
+timestamp (seconds) = 1.188085
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          144          6
+    obj  1:    -0.109875     1.018939    -1.428374     0.000000     1.757999    -6.154581          -54          119          6
+Parser result:  0
+totalBytesParsed:  19712
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 296
+timestamp (cycles)  = 277624266
+timestamp (seconds) = 1.388121
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.714703     0.347937     0.000000     0.795285     1.991567           25          145          6
+    obj  1:    -0.109875     1.018939    -1.428374     0.000000     1.757999    -6.154581          -54          128          6
+    obj  2:     1.255714     2.383928     1.988214     0.000000     3.348570    27.777642           36          116          6
+Parser result:  0
+totalBytesParsed:  20416
+headerStartIndex    = 0
+totalPacketNumBytes = 736
+platform            = b'000a6843'
+frameNumber         = 297
+timestamp (cycles)  = 317652430
+timestamp (seconds) = 1.588262
+numDetObj           = 4
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 64 bytes
+The 2nd TLV
+    type 7
+    len 16 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.725000     0.323085     0.000000     0.795285     3.922011           23          152          6
+    obj  1:    -0.109875     1.091861    -1.373437     0.000000     1.757999    -5.746382          -51          121          6
+    obj  2:     1.255714     2.383928     1.988214     0.000000     3.348570    27.777642           36          128          6
+    obj  3:     1.179848     2.405566     2.145178     0.000000     3.432284    26.126369           38          114          6
+Parser result:  0
+totalBytesParsed:  21152
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 298
+timestamp (cycles)  = 357618454
+timestamp (seconds) = 1.788092
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.761563     0.223674     0.000000     0.795285     3.734258           16          178          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          136          6
+    obj  2:     1.179848     2.497083     2.037919     0.000000     3.432284    25.290287           36          121          6
+Parser result:  0
+totalBytesParsed:  21856
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 299
+timestamp (cycles)  = 397624292
+timestamp (seconds) = 1.988121
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.000000     0.726702     0.323085     0.000000     0.795285     0.000000           23          171          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          134          6
+    obj  2:     1.179848     2.497083     2.037919     0.000000     3.432284    25.290287           36          115          6
+Parser result:  0
+totalBytesParsed:  22560
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 300
+timestamp (cycles)  = 437611298
+timestamp (seconds) = 2.188056
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.049705     0.774431     0.173969     0.000000     0.795285    -3.672381           12          173          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          136          6
+Parser result:  0
+totalBytesParsed:  23264
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 301
+timestamp (cycles)  = 477606768
+timestamp (seconds) = 2.388034
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.000000     0.770032     0.198821     0.000000     0.795285     0.000000           14          179          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          137          6
+Parser result:  0
+totalBytesParsed:  23968
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 302
+timestamp (cycles)  = 517612013
+timestamp (seconds) = 2.588060
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.074558     0.733470     0.298232     0.000000     0.795285     5.804243           22          167          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          140          6
+Parser result:  0
+totalBytesParsed:  24672
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 303
+timestamp (cycles)  = 557612789
+timestamp (seconds) = 2.788064
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.735572     0.298232     0.000000     0.795285     3.865813           22          166          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          141          6
+Parser result:  0
+totalBytesParsed:  25376
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 304
+timestamp (cycles)  = 597623749
+timestamp (seconds) = 2.988119
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          167          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          140          6
+    obj  2:     1.890111     2.433359     1.778928     0.000000     3.557856    37.838269           29          113          6
+Parser result:  0
+totalBytesParsed:  26080
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 305
+timestamp (cycles)  = 637611131
+timestamp (seconds) = 3.188056
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.755047     0.248527     0.000000     0.795285     1.885233           18          169          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          139          6
+Parser result:  0
+totalBytesParsed:  26784
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 306
+timestamp (cycles)  = 677613024
+timestamp (seconds) = 3.388065
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.755047     0.248527     0.000000     0.795285     1.885233           18          167          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          141          6
+Parser result:  0
+totalBytesParsed:  27488
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 307
+timestamp (cycles)  = 717612562
+timestamp (seconds) = 3.588063
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.726276     0.323085     0.000000     0.795285     1.959856           23          156          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          141          6
+Parser result:  0
+totalBytesParsed:  28192
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 308
+timestamp (cycles)  = 757612801
+timestamp (seconds) = 3.788064
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.736830     0.298232     0.000000     0.795285     1.931806           22          161          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          140          6
+Parser result:  0
+totalBytesParsed:  28896
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 309
+timestamp (cycles)  = 797612709
+timestamp (seconds) = 3.988064
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.736830     0.298232     0.000000     0.795285     1.931806           22          157          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          141          6
+Parser result:  0
+totalBytesParsed:  29600
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 310
+timestamp (cycles)  = 837613124
+timestamp (seconds) = 4.188066
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          154          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          142          6
+Parser result:  0
+totalBytesParsed:  30304
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 311
+timestamp (cycles)  = 877611618
+timestamp (seconds) = 4.388058
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          148          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          142          6
+Parser result:  0
+totalBytesParsed:  31008
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 312
+timestamp (cycles)  = 917613523
+timestamp (seconds) = 4.588068
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          149          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          141          6
+Parser result:  0
+totalBytesParsed:  31712
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 313
+timestamp (cycles)  = 957613311
+timestamp (seconds) = 4.788067
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          154          6
+    obj  1:     1.255714     2.383928     1.988214     0.000000     3.348570    27.777642           36          140          6
+Parser result:  0
+totalBytesParsed:  32416
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 314
+timestamp (cycles)  = 997612931
+timestamp (seconds) = 4.988065
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.049705     0.745166     0.273379     0.000000     0.795285     3.816189           20          150          6
+    obj  1:     1.255714     2.467441     1.883571     0.000000     3.348570    26.972151           34          140          6
+Parser result:  0
+totalBytesParsed:  33120
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 315
+timestamp (cycles)  = 1037612074
+timestamp (seconds) = 5.188060
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.024853     0.746408     0.273379     0.000000     0.795285     1.907036           20          155          6
+    obj  1:     1.360357     2.411330     1.883571     0.000000     3.348570    29.429599           34          140          6
+Parser result:  0
+totalBytesParsed:  33824
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 316
+timestamp (cycles)  = 1077611845
+timestamp (seconds) = 5.388059
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:     0.000000     0.746822     0.273379     0.000000     0.795285     0.000000           20          158          6
+    obj  1:     1.360357     2.411330     1.883571     0.000000     3.348570    29.429599           34          142          6
+Parser result:  0
+totalBytesParsed:  34528
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 317
+timestamp (cycles)  = 1117612495
+timestamp (seconds) = 5.588062
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.024853     0.746408     0.273379     0.000000     0.795285    -1.907036           20          162          6
+    obj  1:     1.360357     2.411330     1.883571     0.000000     3.348570    29.429599           34          138          6
+Parser result:  0
+totalBytesParsed:  35232
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 318
+timestamp (cycles)  = 1157612158
+timestamp (seconds) = 5.788061
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+    type 7
+    len 8 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    no
+    obj  0:    -0.024853     0.726276     0.323085     0.000000     0.795285    -1.959856           23          158          6
+    obj  1:     1.360357     2.411330     1.883571     0.000000     3.348570    29.429599           34          137          6
+Parser result:  0
+totalBytesParsed:  35936
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 319
+timestamp (cycles)  = 1197612251
+timestamp (seconds) = 5.988061
+numDetObj           = 2
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 32 bytes
+The 2nd TLV
+       34          132          666
+Parser result:  0
+totalBytesParsed:  36640
+headerStartIndex    = 0
+totalPacketNumBytes = 704
+platform            = b'000a6843'
+frameNumber         = 320
+timestamp (cycles)  = 1237629852
+timestamp (seconds) = 6.188149
+numDetObj           = 3
+numTlv              = 5
+subFrameNumber      = 0
+The 1st TLV
+    type 1
+    len 48 bytes
+The 2nd TLV
+    type 7
+    len 12 bytes
+                  x(m)         y(m)         z(m)        v(m/s)    Com0range(m)  azimuth(deg)  elevAngle(deg)  snr(0.1dB)    noise(0.1dB)
+    obj  0:     0.024853     0.714703     0.347937     0.000000     0.795285     1.991567           25          133          611
+    obj  1:     0.000000     0.943582    -1.483312     0.000000     1.757999     0.000000          -57          113          655
+    obj  2:     1.360357     2.325803     1.988214     0.000000     3.348570    30.323264           36          121          672
+Parser result:  0
+totalBytesParsed:  37344
+numFramesParsed:  51
+PS C:\ti>
