@@ -1,139 +1,242 @@
-# ****************************************************************************
-# * (C) Copyright 2020, Texas Instruments Incorporated. - www.ti.com
-# ****************************************************************************
-# *
-# *  Redistribution and use in source and binary forms, with or without
-# *  modification, are permitted provided that the following conditions are
-# *  met:
-# *
-# *    Redistributions of source code must retain the above copyright notice,
-# *    this list of conditions and the following disclaimer.
-# *
-# *    Redistributions in binary form must reproduce the above copyright
-# *    notice, this list of conditions and the following disclaimer in the
-# *     documentation and/or other materials provided with the distribution.
-# *
-# *    Neither the name of Texas Instruments Incorporated nor the names of its
-# *    contributors may be used to endorse or promote products derived from
-# *    this software without specific prior written permission.
-# *
-# *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-# *  PARTICULAR TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# *  A PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT  OWNER OR
-# *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# *  EXEMPLARY, ORCONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-# *  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-# *  LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY, OR TORT (INCLUDING
-# *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-# *
-# ****************************************************************************
-
-
-# ****************************************************************************
-# Sample mmW demo UART output parser script - should be invoked using python3
-#       ex: python3 mmw_demo_example_script.py <recorded_dat_file_from_Visualizer>.dat
-#
-# Notes:
-#   1. The parser_mmw_demo script will output the text version 
-#      of the captured files on stdio. User can redirect that output to a log file, if desired
-#   2. This example script also outputs the detected point cloud data in mmw_demo_output.csv 
-#      to showcase how to use the output of parser_one_mmw_demo_output_packet
-# ****************************************************************************
-
 import os
-import sys
-# import the parser function 
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from mpl_toolkits.mplot3d import Axes3D
+
 from parser_mmw_demo import parser_one_mmw_demo_output_packet
 
-##################################################################################
-# INPUT CONFIGURATION
-##################################################################################
-# get the captured file name (obtained from Visualizer via 'Record Start')
-# if (len(sys.argv) > 1):
-#     capturedFileName=sys.argv[1]
-# else:
-#     print ("Error: provide file name of the saved stream from Visualizer for OOB demo")
-#     exit()
-capturedFileName=r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_18T23_40_02_499.dat"
-#line of sight - diffenciate between different users
-#
-# capturedFileName=r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_19T23_09_08_330.dat"
-# capturedFileName=r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_19T23_09_08_330.dat"
+###############################################################################
+# CONFIG
+###############################################################################
+# capturedFileName = r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_18T23_40_02_499.dat"
 
-##################################################################################
-# USE parser_mmw_demo SCRIPT TO PARSE ABOVE INPUT FILES
-##################################################################################
-# Read the entire file 
+import glob
+import os
+
+def find_latest_dat_file(directory_path):
+    # Construct the search pattern for .dat files in the specified directory
+    search_pattern = os.path.join(directory_path, '*.dat')
+    
+    # Get a list of all files matching the pattern
+    list_of_files = glob.glob(search_pattern)
+    
+    # Check if any files were found
+    if not list_of_files:
+        return None # No .dat files found
+        
+    # Sort the files by their last modification time (os.path.getmtime)
+    # The 'key' argument uses a lambda function to get the modification time for each file
+    # 'reverse=True' sorts in descending order, putting the latest file first
+    latest_file = max(list_of_files, key=os.path.getmtime)
+    
+    return latest_file
+
+
+# capturedFileName = r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_18T23_40_02_499.dat"
+your_path = r"C:\Users\c1op3\Downloads"
+# If the files are in the current working directory, you can use '.'
+# your_path = '.' 
+
+capturedFileName = find_latest_dat_file(your_path)
+
+if capturedFileName:
+    print(f"The latest .dat file found is: {capturedFileName}")
+else:
+    print(f"No .dat files found in the directory: {your_path}")
+###############################################################################
+# READ FILE
+###############################################################################
 fp = open(capturedFileName,'rb')
 readNumBytes = os.path.getsize(capturedFileName)
-print("readNumBytes: ", readNumBytes)
+print("readNumBytes:", readNumBytes)
 allBinData = fp.read()
-print("allBinData: ", allBinData[0], allBinData[1], allBinData[2], allBinData[3])
 fp.close()
 
-# init local variables
-totalBytesParsed = 0;
-numFramesParsed = 0;
+###############################################################################
+# PARSE ALL FRAMES INTO MEMORY
+###############################################################################
+totalBytesParsed = 0
+numFramesParsed = 0
 
-# parser_one_mmw_demo_output_packet extracts only one complete frame at a time
-# so call this in a loop till end of file
-while (totalBytesParsed < readNumBytes):
-    
-    # parser_one_mmw_demo_output_packet function already prints the
-    # parsed data to stdio. So showcasing only saving the data to arrays 
-    # here for further custom processing
+frames_points = []   # list of Nx3 arrays
+frames_velocity = [] # list of N arrays
+
+while totalBytesParsed < readNumBytes:
+
     parser_result, \
-    headerStartIndex,  \
+    headerStartIndex, \
     totalPacketNumBytes, \
-    numDetObj,  \
-    numTlv,  \
-    subFrameNumber,  \
-    detectedX_array,  \
-    detectedY_array,  \
-    detectedZ_array,  \
-    detectedV_array,  \
-    detectedRange_array,  \
-    detectedAzimuth_array,  \
-    detectedElevation_array,  \
-    detectedSNR_array,  \
-    detectedNoise_array = parser_one_mmw_demo_output_packet(allBinData[totalBytesParsed::1], readNumBytes-totalBytesParsed)
+    numDetObj, \
+    numTlv, \
+    subFrameNumber, \
+    detectedX_array, \
+    detectedY_array, \
+    detectedZ_array, \
+    detectedV_array, \
+    detectedRange_array, \
+    detectedAzimuth_array, \
+    detectedElevation_array, \
+    detectedSNR_array, \
+    detectedNoise_array = parser_one_mmw_demo_output_packet(
+        allBinData[totalBytesParsed:], 
+        readNumBytes-totalBytesParsed)
 
-    # Check the parser result
-    print ("Parser result: ", parser_result)
-    if (parser_result == 0): 
-        totalBytesParsed += (headerStartIndex+totalPacketNumBytes)    
-        numFramesParsed+=1
-        print("totalBytesParsed: ", totalBytesParsed)
-        ##################################################################################
-        # TODO: use the arrays returned by above parser as needed. 
-        # For array dimensions, see help(parser_one_mmw_demo_output_packet)
-        # help(parser_one_mmw_demo_output_packet)
-        ##################################################################################
-
-        
-        # For example, dump all S/W objects to a csv file
-        import csv
-        if (numFramesParsed == 1):
-            democsvfile = open('mmw_demo_output.csv', 'w', newline='')                
-            demoOutputWriter = csv.writer(democsvfile, delimiter=',',
-                                    quotechar='', quoting=csv.QUOTE_NONE)                                    
-            demoOutputWriter.writerow(["frame","DetObj#","x","y","z","v","snr","noise"])            
-            
-        for obj in range(numDetObj):
-            demoOutputWriter.writerow([numFramesParsed-1, obj, detectedX_array[obj],\
-                                           detectedY_array[obj],\
-                                           detectedZ_array[obj],\
-                                           detectedV_array[obj],\
-                                           detectedSNR_array[obj],\
-                                           detectedNoise_array[obj]])
-
-        
-    else: 
-        # error in parsing; exit the loop
+    if parser_result != 0:
         break
 
-# All processing done; Exit
-print("numFramesParsed: ", numFramesParsed)
+    totalBytesParsed += (headerStartIndex + totalPacketNumBytes)
+    numFramesParsed += 1
+
+    if numDetObj > 0:
+        points = np.column_stack((
+            detectedX_array[:numDetObj],
+            detectedY_array[:numDetObj],
+            detectedZ_array[:numDetObj]
+        ))
+        velocities = np.array(detectedV_array[:numDetObj])
+
+        frames_points.append(points)
+        frames_velocity.append(velocities)
+    else:
+        frames_points.append(np.empty((0,3)))
+        frames_velocity.append(np.array([]))
+
+print("Total frames parsed:", numFramesParsed)
+###############################################################################
+# RANGE VS TIME DATA STRUCTURE
+###############################################################################
+
+frame_period = 0.05  # seconds (adjust if you know actual frameCfg)
+time_axis = []
+range_frames = []
+
+for i, points in enumerate(frames_points):
+
+    current_time = i * frame_period
+    time_axis.append(current_time)
+
+    if len(points) > 0:
+        ranges = np.sqrt(
+            points[:,0]**2 +
+            points[:,1]**2 +
+            points[:,2]**2
+        )
+        range_frames.append(ranges)
+    else:
+        range_frames.append(np.array([]))
+
+time_axis = np.array(time_axis)
+###############################################################################
+# 3D ANIMATION
+###############################################################################
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+
+scatter = ax.scatter([], [], [], c=[], cmap='jet')
+
+ax.set_xlim(-5, 5)
+ax.set_ylim(0, 10)
+ax.set_zlim(-3, 3)
+
+ax.set_xlabel("X (m)")
+ax.set_ylabel("Y (m)")
+ax.set_zlabel("Z (m)")
+ax.set_title("mmWave Point Cloud Motion")
+
+def update(frame_idx):
+
+    ax.cla()
+
+    points = frames_points[frame_idx]
+    velocities = frames_velocity[frame_idx]
+
+    ax.set_xlim(-5, 5)
+    ax.set_ylim(0, 10)
+    ax.set_zlim(-3, 3)
+
+    ax.set_xlabel("X (m)")
+    ax.set_ylabel("Y (m)")
+    ax.set_zlabel("Z (m)")
+    ax.set_title(f"Frame {frame_idx}")
+
+    if len(points) > 0:
+        sc = ax.scatter(
+            points[:,0],
+            points[:,1],
+            points[:,2],
+            c=velocities,
+            cmap='jet'
+        )
+
+    return []
+
+ani = FuncAnimation(
+    fig,
+    update,
+    frames=len(frames_points),
+    interval=50
+)
+
+plt.show()
+
+###############################################################################
+# STATIC RANGE VS TIME PLOT
+###############################################################################
+
+plt.figure()
+
+for i in range(len(range_frames)):
+    if len(range_frames[i]) > 0:
+        t = np.ones(len(range_frames[i])) * time_axis[i]
+        plt.scatter(t, range_frames[i], s=5)
+
+plt.xlabel("Time (s)")
+plt.ylabel("Range (m)")
+plt.title("Range vs Time")
+plt.grid()
+plt.show()
+
+###############################################################################
+# ANIMATED RANGE VS TIME
+###############################################################################
+
+fig2, ax2 = plt.subplots()
+
+ax2.set_xlim(0, time_axis[-1])
+ax2.set_ylim(0, 10)
+
+ax2.set_xlabel("Time (s)")
+ax2.set_ylabel("Range (m)")
+ax2.set_title("Range vs Time Animation")
+
+all_times = []
+all_ranges = []
+
+def update_range(frame_idx):
+
+    if len(range_frames[frame_idx]) > 0:
+        t = np.ones(len(range_frames[frame_idx])) * time_axis[frame_idx]
+        all_times.extend(t)
+        all_ranges.extend(range_frames[frame_idx])
+
+    ax2.cla()
+    ax2.set_xlim(0, time_axis[-1])
+    ax2.set_ylim(0, 10)
+    ax2.set_xlabel("Time (s)")
+    ax2.set_ylabel("Range (m)")
+    ax2.set_title("Range vs Time Animation")
+
+    ax2.scatter(all_times, all_ranges, s=5)
+
+ani2 = FuncAnimation(
+    fig2,
+    update_range,
+    frames=len(range_frames),
+    interval=50
+)
+
+plt.show()
+
+#velocity vs time
+#
