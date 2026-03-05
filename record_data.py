@@ -186,7 +186,7 @@ except Exception as e:
 
 finally:
     print("Script complete. Browser remains open for recording.")
-    driver.quit() # Uncomment if you want it to close automatically
+    # driver.quit() # Uncomment if you want it to close automatically
 
 
 import os
@@ -265,7 +265,7 @@ def find_and_move_latest_dat_file(source_dir, destination_root, experiment_name)
 your_path = r"C:\Users\c1op3\Downloads"
 script_dir = os.path.dirname(os.path.abspath(__file__))
 destination_path = os.path.join(script_dir, 'dat_directory')
-experiment_name = "test1"
+experiment_name = "test2"
 
 
 ###############################################################################
@@ -477,4 +477,83 @@ ani2 = FuncAnimation(
 plt.show()
 
 #velocity vs time
-#
+###############################################################################
+# IMPROVED VELOCITY & DOPPLER VISUALIZATION
+###############################################################################
+import matplotlib.colors as mcolors
+
+# Prepare data
+all_velocities = []
+all_times = []
+all_ranges = []
+
+for i, vels in enumerate(frames_velocity):
+    if len(vels) > 0:
+        t = np.ones(len(vels)) * time_axis[i]
+        # Calculate ranges for the Range-Doppler Heatmap
+        pts = frames_points[i]
+        rngs = np.sqrt(pts[:,0]**2 + pts[:,1]**2 + pts[:,2]**2)
+        
+        all_times.extend(t)
+        all_velocities.extend(vels)
+        all_ranges.extend(rngs)
+
+all_times = np.array(all_times)
+all_velocities = np.array(all_velocities)
+all_ranges = np.array(all_ranges)
+
+# 1️⃣ DIVERGING DOPPLER SCATTER (Directional)
+# This uses a 'RdBu_r' map: Red for approaching (+), Blue for receding (-)
+plt.figure(figsize=(12, 6))
+# TwoSlopeNorm ensures 0 m/s is exactly the center (white) of the colormap
+v_max = max(abs(all_velocities.min()), abs(all_velocities.max()), 0.1)
+norm = mcolors.TwoSlopeNorm(vmin=-v_max, vcenter=0, vmax=v_max)
+
+sc = plt.scatter(all_times, all_velocities, c=all_velocities, s=12, 
+                 cmap='RdBu_r', norm=norm, alpha=0.7, edgecolors='none')
+
+plt.colorbar(sc, label="Radial Velocity (m/s)\n[(-) Moving Away  |  (+) Approaching]")
+plt.axhline(0, color='black', linestyle='--', linewidth=1, alpha=0.5)
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.title("Doppler Velocity Profile (Directional)")
+plt.grid(True, linestyle=':', alpha=0.6)
+plt.show()
+
+# 2️⃣ VELOCITY DENSITY MAP (Hexbin)
+# This handles "point cloud noise" by showing where the most reflections are clustered
+plt.figure(figsize=(12, 6))
+hb = plt.hexbin(all_times, all_velocities, gridsize=(80, 40), cmap='magma', mincnt=1)
+plt.colorbar(hb, label='Reflection Density (Count)')
+plt.axhline(0, color='white', linestyle='--', linewidth=1, alpha=0.3)
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.title("Doppler Intensity (Movement Energy over Time)")
+plt.show()
+
+# 3️⃣ RANGE-DOPPLER HEATMAP (The "Radar Signature")
+# Visualizes how velocity relates to distance from the sensor
+plt.figure(figsize=(10, 6))
+plt.hist2d(all_ranges, all_velocities, bins=[50, 50], cmap='viridis', cmin=1)
+plt.colorbar(label='Point Count')
+plt.xlabel("Range (m)")
+plt.ylabel("Velocity (m/s)")
+plt.title("Range-Doppler Distribution (Aggregated Experiment)")
+plt.grid(alpha=0.2)
+plt.show()
+
+# 4️⃣ STATISTICAL VELOCITY TRENDS
+avg_velocity = [np.mean(v) if len(v) > 0 else 0 for v in frames_velocity]
+max_velocity = [np.max(v) if len(v) > 0 else 0 for v in frames_velocity]
+min_velocity = [np.min(v) if len(v) > 0 else 0 for v in frames_velocity]
+
+plt.figure(figsize=(12, 5))
+plt.plot(time_axis, avg_velocity, label='Average Velocity', color='green', alpha=0.8)
+plt.fill_between(time_axis, min_velocity, max_velocity, color='gray', alpha=0.2, label='Velocity Spread (Min/Max)')
+plt.axhline(0, color='black', lw=1)
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.title("Velocity Dynamics Over Time")
+plt.legend(loc='upper right')
+plt.grid(True, alpha=0.3)
+plt.show()
