@@ -239,4 +239,58 @@ ani2 = FuncAnimation(
 plt.show()
 
 #velocity vs time
-#
+###############################################################################
+# VELOCITY VS TIME PLOTS
+###############################################################################
+
+# 1️⃣ Velocity of all detected objects over time (scatter)
+plt.figure(figsize=(10,5))
+all_velocities = []
+all_times = []
+
+for i, vels in enumerate(frames_velocity):
+    if len(vels) > 0:
+        t = np.ones(len(vels)) * time_axis[i]
+        all_times.extend(t)
+        all_velocities.extend(vels)
+
+plt.scatter(all_times, all_velocities, s=5, c=all_velocities, cmap='viridis')
+plt.colorbar(label="Velocity (m/s)")
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.title("Velocity of Detected Objects vs Time")
+plt.grid(True)
+plt.show()
+
+# 2️⃣ Average velocity vs time
+avg_velocity = [np.mean(v) if len(v) > 0 else 0 for v in frames_velocity]
+
+plt.figure(figsize=(10,5))
+plt.plot(time_axis, avg_velocity, '-o', color='red')
+plt.xlabel("Time (s)")
+plt.ylabel("Average Velocity (m/s)")
+plt.title("Average Velocity vs Time")
+plt.grid(True)
+plt.show()
+
+# 3️⃣ Maximum velocity vs time
+max_velocity = [np.max(v) if len(v) > 0 else 0 for v in frames_velocity]
+
+plt.figure(figsize=(10,5))
+plt.plot(time_axis, max_velocity, '-o', color='blue')
+plt.xlabel("Time (s)")
+plt.ylabel("Maximum Velocity (m/s)")
+plt.title("Maximum Velocity vs Time")
+plt.grid(True)
+plt.show()
+
+# 4️⃣ Velocity histogram per frame (optional)
+plt.figure(figsize=(10,5))
+for i, vels in enumerate(frames_velocity):
+    if len(vels) > 0:
+        plt.hist(vels, bins=20, alpha=0.3, label=f"t={time_axis[i]:.2f}s")
+plt.xlabel("Velocity (m/s)")
+plt.ylabel("Count")
+plt.title("Velocity Distribution Over Time")
+plt.legend()
+plt.show()
