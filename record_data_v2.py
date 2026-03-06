@@ -56,7 +56,6 @@ class RadarRecorder:
 
         print("🌐 Starting TI Visualizer via Selenium...")
         
-        # Chrome setup with download preferences to prevent prompts
         options = webdriver.ChromeOptions()
         options.add_argument(r"--user-data-dir=C:\SeleniumTIProfile")
         options.add_argument("--profile-directory=Default")
@@ -73,19 +72,17 @@ class RadarRecorder:
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         wait = WebDriverWait(driver, 15)
 
-        script_start_time = time.time() # MARKER: Capture time before recording starts
+        script_start_time = time.time()
 
         try:
             driver.get("https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/")
             time.sleep(12)
 
-            # Handle modals
             for selector in [(By.ID, "consent_prompt_submit"), 
                              (By.XPATH, "//paper-button[contains(text(),'CLOSE')] | //button[contains(text(),'CLOSE')]")]:
                 try: wait.until(EC.element_to_be_clickable(selector)).click()
                 except: pass
 
-            # Set platform
             driver.execute_script("""
                 var element = document.getElementById(arguments[0]);
                 element.selectedValue = arguments[1];
@@ -93,7 +90,6 @@ class RadarRecorder:
             """, "ti_widget_droplist_platform", self.cfg.PLATFORM_VALUE)
             time.sleep(2)
 
-            # Configure serial ports
             driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Options')]"))))
             driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.XPATH, "//li[.//td[contains(text(),'Serial Port')]]"))))
             time.sleep(5)
@@ -112,13 +108,11 @@ class RadarRecorder:
                 """, widget_id, port_name)
                 time.sleep(1)
 
-            # Confirm and Send Config
             driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.ID, "btnOK"))))
             time.sleep(3)
             driver.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//paper-button[contains(.,'Send Config')] | //paper-material[contains(.,'Send Config')]"))))
             time.sleep(5)
 
-            # Switch to Plots and Set limits
             driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.XPATH, "//paper-tab[@id='tab_1'] | //paper-tab[contains(., 'Plots')]"))))
             time.sleep(3)
 
@@ -131,7 +125,6 @@ class RadarRecorder:
                     input.dispatchEvent(new Event('change', { bubbles: true }));
                 """, wid, str(val))
 
-            # Record
             record_btn_id = "ti_widget_button_record"
             driver.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.ID, record_btn_id))))
             print(f"🔴 Recording started for {self.cfg.RECORD_DURATION_SEC} seconds...")
@@ -141,13 +134,10 @@ class RadarRecorder:
             print("⏹️ Recording stopped.")
         except Exception as e:
             print(f"Selenium Error: {e}")
-        # finally:
-        #     driver.quit()
 
         return self._wait_and_move_file(script_start_time)
 
     def _wait_and_move_file(self, start_time):
-        """Robustly waits for the newly downloaded file to appear."""
         print("⏳ Waiting for file download to complete...")
         elapsed = 0
         
@@ -155,9 +145,8 @@ class RadarRecorder:
             files = glob.glob(os.path.join(self.cfg.DAT_SOURCE_DIR, '*.dat'))
             if files:
                 latest_file = max(files, key=os.path.getmtime)
-                # Ensure the file is NEWER than when we started the script
                 if os.path.getmtime(latest_file) > start_time:
-                    time.sleep(1)  # Buffer to ensure writing is totally finished
+                    time.sleep(1)
                     
                     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                     exp_folder = os.path.join(self.cfg.DAT_DEST_DIR, f"{self.cfg.EXPERIMENT_NAME}_{timestamp}")
@@ -174,7 +163,6 @@ class RadarRecorder:
         raise FileNotFoundError("❌ Timeout: No new .dat file appeared in Downloads folder.")
 
     def get_latest_offline_file(self):
-        """Grabs the most recent file from the dat_directory if offline."""
         folders = sorted([os.path.join(self.cfg.DAT_DEST_DIR, d) for d in os.listdir(self.cfg.DAT_DEST_DIR) 
                           if os.path.isdir(os.path.join(self.cfg.DAT_DEST_DIR, d))], 
                          key=os.path.getmtime, reverse=True)
@@ -232,7 +220,6 @@ class RadarParser:
         self._compute_metrics()
 
     def _compute_metrics(self):
-        """Calculates ranges and time progression."""
         for i, points in enumerate(self.frames_points):
             self.time_axis.append(i * self.cfg.FRAME_PERIOD)
             if len(points) > 0:
@@ -269,62 +256,77 @@ class RadarVisualizer:
         self.all_vels = np.array(self.all_vels)
         self.all_ranges = np.array(self.all_ranges)
 
-    def plot_and_save_combined(self, save_filepath):
-        """Plots all three visualizations on a single figure and saves it."""
+    def save_individual_plots(self, dat_path):
+        """Saves three separate charts to the same folder as the .dat file."""
         if len(self.all_times) == 0:
             print("No data points available for plotting.")
             return
 
-        # Create a large figure with 3 stacked plots (rows=3, cols=1)
-        fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(14, 18))
-        fig.tight_layout(pad=6.0) # Adds padding between subplots
+        output_dir = os.path.dirname(dat_path)
+        base_name = os.path.splitext(os.path.basename(dat_path))[0]
 
         # -----------------------------
-        # Subplot 1: Basic Velocity
+        # Plot 1: Doppler Velocity Profile
         # -----------------------------
-        v_max = max(abs(self.all_vels.min()) if len(self.all_vels) else 0, 
+        fig, ax = plt.subplots(figsize=(14, 5))
+        v_max = max(abs(self.all_vels.min()) if len(self.all_vels) else 0,
                     abs(self.all_vels.max()) if len(self.all_vels) else 0, 0.1)
         norm = mcolors.TwoSlopeNorm(vmin=-v_max, vcenter=0, vmax=v_max)
-        
-        sc1 = ax1.scatter(self.all_times, self.all_vels, c=self.all_vels, cmap='RdBu_r', norm=norm, s=12, alpha=0.7, edgecolors='none')
-        fig.colorbar(sc1, ax=ax1, label="Radial Velocity (m/s)")
-        ax1.axhline(0, color='black', linestyle='--', linewidth=1, alpha=0.5)
-        ax1.set_xlabel("Time (s)")
-        ax1.set_ylabel("Velocity (m/s)")
-        ax1.set_title("Doppler Velocity Profile")
-        ax1.grid(True, linestyle=':', alpha=0.6)
+
+        sc = ax.scatter(self.all_times, self.all_vels, c=self.all_vels, cmap='RdBu_r',
+                        norm=norm, s=12, alpha=0.7, edgecolors='none')
+        fig.colorbar(sc, ax=ax, label="Radial Velocity (m/s)")
+        ax.axhline(0, color='black', linestyle='--', linewidth=1, alpha=0.5)
+        ax.set_xlabel("Time (s)")
+        ax.set_ylabel("Velocity (m/s)")
+        ax.set_title("Doppler Velocity Profile")
+        ax.grid(True, linestyle=':', alpha=0.6)
+        fig.tight_layout()
+        fig.savefig(os.path.join(output_dir, f"{base_name}_velocity.png"), dpi=300, bbox_inches='tight')
+        plt.close(fig)
+        print(f"💾 Saved: {base_name}_velocity.png")
 
         # -----------------------------
-        # Subplot 2: Micro-Doppler
+        # Plot 2: Micro-Doppler Signature
         # -----------------------------
+        fig, ax = plt.subplots(figsize=(14, 5))
         h_v, x_v, y_v = np.histogram2d(self.all_times, self.all_vels, bins=[600, 200])
         h_v_smooth = gaussian_filter(h_v, sigma=1.5)
-        
-        im2 = ax2.imshow(h_v_smooth.T, origin='lower', aspect='auto', extent=[x_v[0], x_v[-1], y_v[0], y_v[-1]], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.4))
-        ax2.set_title("Gradient Micro-Doppler Signature (VT Profile)")
-        ax2.set_xlabel("Time (s)")
-        ax2.set_ylabel("Velocity (m/s)")
-        fig.colorbar(im2, ax=ax2, label='Signal Density')
+
+        im = ax.imshow(h_v_smooth.T, origin='lower', aspect='auto',
+                       extent=[x_v[0], x_v[-1], y_v[0], y_v[-1]],
+                       cmap='turbo', norm=mcolors.PowerNorm(gamma=0.4))
+        ax.set_title("Gradient Micro-Doppler Signature (VT Profile)")
+        ax.set_xlabel("Time (s)")
+        ax.set_ylabel("Velocity (m/s)")
+        fig.colorbar(im, ax=ax, label='Signal Density')
+        fig.tight_layout()
+        fig.savefig(os.path.join(output_dir, f"{base_name}_micro_doppler.png"), dpi=300, bbox_inches='tight')
+        plt.close(fig)
+        print(f"💾 Saved: {base_name}_micro_doppler.png")
 
         # -----------------------------
-        # Subplot 3: Range-Time Intensity
+        # Plot 3: Range-Time Intensity
         # -----------------------------
+        fig, ax = plt.subplots(figsize=(14, 5))
         h_r, x_r, y_r = np.histogram2d(self.all_times, self.all_ranges, bins=[600, 250])
         h_r_smooth = gaussian_filter(h_r, sigma=1.2)
-        
-        im3 = ax3.imshow(h_r_smooth.T, origin='lower', aspect='auto', extent=[x_r[0], x_r[-1], y_r[0], y_r[-1]], cmap='turbo', norm=mcolors.LogNorm())
-        ax3.set_title("Gradient Range-Time Intensity (RT Profile)")
-        ax3.set_xlabel("Time (s)")
-        ax3.set_ylabel("Range (m)")
-        ax3.set_ylim(0, 8) 
-        fig.colorbar(im3, ax=ax3, label='Intensity')
 
-        # -----------------------------
-        # Save and Display
-        # -----------------------------
-        plt.savefig(save_filepath, dpi=300, bbox_inches='tight')
-        print(f"🖼️ Saved combined plot to: {save_filepath}")
-        plt.show()
+        im = ax.imshow(h_r_smooth.T, origin='lower', aspect='auto',
+                       extent=[x_r[0], x_r[-1], y_r[0], y_r[-1]],
+                       cmap='turbo', norm=mcolors.LogNorm())
+        ax.set_title("Gradient Range-Time Intensity (RT Profile)")
+        ax.set_xlabel("Time (s)")
+        ax.set_ylabel("Range (m)")
+        ax.set_ylim(0, 8)
+        fig.colorbar(im, ax=ax, label='Intensity')
+        fig.tight_layout()
+        fig.savefig(os.path.join(output_dir, f"{base_name}_rti.png"), dpi=300, bbox_inches='tight')
+        plt.close(fig)
+        print(f"💾 Saved: {base_name}_rti.png")
+
+        print(f"✅ All 3 plots saved to: {output_dir}")
+
 
 # -----------------------------
 # 5. MAIN EXECUTION
@@ -345,12 +347,10 @@ if __name__ == "__main__":
     parser = RadarParser(cfg)
     parser.parse(dat_filepath)
 
-    # 4. Visualize Data
-    print("🎨 Generating visualizations...")
-    viz = RadarVisualizer(parser)
-    
-    # Create an image filename based on the .dat filename
-    save_img_path = dat_filepath.replace('.dat', '_combined_plots.png')
-    
-    # Generate, display, and save the massive 3-pane figure
-    viz.plot_and_save_combined(save_img_path)
+    # 4. Visualize and Save
+    if len(parser.frames_points) > 0:
+        print("🎨 Generating visualizations...")
+        viz = RadarVisualizer(parser)
+        viz.save_individual_plots(dat_filepath)
+    else:
+        print("❌ No data to plot.")
