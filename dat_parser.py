@@ -46,7 +46,7 @@
 import os
 import sys
 # import the parser function 
-from parser_mmw_demo import parser_one_mmw_demo_output_packet
+from ti_mmw_official_tool.parser_scripts.parser_mmw_demo import parser_one_mmw_demo_output_packet
 
 ##################################################################################
 # INPUT CONFIGURATION
@@ -57,7 +57,7 @@ from parser_mmw_demo import parser_one_mmw_demo_output_packet
 # else:
 #     print ("Error: provide file name of the saved stream from Visualizer for OOB demo")
 #     exit()
-capturedFileName=r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_18T23_40_02_499.dat"
+capturedFileName=r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_26T06_17_54_793.dat"
 #line of sight - diffenciate between different users
 #
 # capturedFileName=r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_19T23_09_08_330.dat"
