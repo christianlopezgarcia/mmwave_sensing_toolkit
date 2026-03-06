@@ -294,3 +294,48 @@ plt.ylabel("Count")
 plt.title("Velocity Distribution Over Time")
 plt.legend()
 plt.show()
+
+import matplotlib.colors as mcolors
+
+all_times = []
+all_vels = []
+all_ranges = []
+
+# Flatten data for density plotting
+for i, vels in enumerate(frames_velocity):
+    if len(vels) > 0:
+        pts = frames_points[i]
+        rngs = np.sqrt(pts[:,0]**2 + pts[:,1]**2 + pts[:,2]**2)
+        
+        all_times.extend([time_axis[i]] * len(vels))
+        all_vels.extend(vels)
+        all_ranges.extend(rngs)
+
+# Convert to numpy arrays
+all_times = np.array(all_times)
+all_vels = np.array(all_vels)
+all_ranges = np.array(all_ranges)
+
+# --- Plot A: Micro-Doppler (Velocity vs Time) ---
+plt.figure(figsize=(12, 5))
+# Using 'turbo' and PowerNorm to highlight subtle arm/leg movements
+plt.hist2d(all_times, all_vels, bins=[350, 150], cmap='turbo', 
+            norm=mcolors.PowerNorm(gamma=0.4))
+plt.colorbar(label='Reflection Density')
+plt.title("High-Fidelity Micro-Doppler Signature (VT)")
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.grid(alpha=0.2)
+plt.show()
+
+# --- Plot B: Range-Time Intensity (RT) ---
+plt.figure(figsize=(12, 5))
+# LogNorm mimics the dB signal strength of the reference images
+plt.hist2d(all_times, all_ranges, bins=[350, 200], cmap='turbo', 
+            norm=mcolors.LogNorm())
+plt.colorbar(label='Signal Intensity')
+plt.title("Range-Time Intensity Profile (RT)")
+plt.xlabel("Time (s)")
+plt.ylabel("Range (m)")
+plt.ylim(0, 10) # Adjust based on your environment
+plt.show()

@@ -16,8 +16,8 @@ from scipy.ndimage import gaussian_filter
 # -----------------------------
 # CONFIGURATION
 # -----------------------------
-RECORD_LIVE = False  # True: record from TI Visualizer, False: use latest dat_directory file
-EXPERIMENT_NAME = "test2"
+RECORD_LIVE = True  # True: record from TI Visualizer, False: use latest dat_directory file
+EXPERIMENT_NAME = "Thursday_Test1"
 
 DAT_SOURCE_DIR = r"C:\Users\c1op3\Downloads"  # only used if RECORD_LIVE=True
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
