@@ -3,6 +3,7 @@ import time
 import glob
 import shutil
 from datetime import datetime
+
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -11,346 +12,515 @@ from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.ndimage import gaussian_filter
 
-# Ensure this import matches your local directory structure
 from ti_mmw_official_tool.parser_scripts.parser_mmw_demo import parser_one_mmw_demo_output_packet
 
-# -----------------------------
-# 1. CONFIGURATION
-# -----------------------------
-class Config:
-    # Mode Selection
-    RECORD_LIVE = True  # True: Use Selenium to record, False: Use latest existing file
-    EXPERIMENT_NAME = "Thursday_Test1"
 
-    # Paths
-    SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-    DAT_SOURCE_DIR = r"C:\Users\c1op3\Downloads"  
-    DAT_DEST_DIR = os.path.join(SCRIPT_DIR, 'dat_directory')
-    
-    # Radar Parameters
-    FRAME_PERIOD = 0.1  # seconds
-    SERIAL_PORTS = {"comPort_0": "COM6", "comPort_1": "COM5"}
-    PLATFORM_VALUE = "xWR68xx_AOP"
+# --------------------------------------------------
+# CONFIGURATION
+# --------------------------------------------------
 
-    # Recording Parameters
-    RECORD_DURATION_SEC = 10
-    FILE_SIZE_MB = 100
-    DOWNLOAD_TIMEOUT_SEC = 20  # How long to wait for Chrome to finish downloading
+RECORD_LIVE = True
+EXPERIMENT_NAME = "test2"
+
+DAT_SOURCE_DIR = r"C:\Users\c1op3\Downloads"
+
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DAT_DEST_DIR = os.path.join(SCRIPT_DIR, "dat_directory")
+
+FRAME_PERIOD = 0.1
+
+SERIAL_PORTS = {
+    "comPort_0": "COM6",
+    "comPort_1": "COM5"
+}
+
+PLATFORM_VALUE = "xWR68xx_AOP"
+
+RECORD_DURATION_SEC = 10
+FILE_SIZE_MB = 100
+DOWNLOAD_BUFFER = 5
 
 
-# -----------------------------
-# 2. RECORDER CLASS (Selenium)
-# -----------------------------
-class RadarRecorder:
-    def __init__(self, config):
-        self.cfg = config
+# --------------------------------------------------
+# FILE DETECTION
+# --------------------------------------------------
 
-    def record_and_fetch_file(self):
-        """Runs the Selenium automation and returns the path to the new .dat file."""
-        from selenium import webdriver
-        from selenium.webdriver.common.by import By
-        from selenium.webdriver.chrome.service import Service
-        from selenium.webdriver.support.ui import WebDriverWait
-        from selenium.webdriver.support import expected_conditions as EC
-        from webdriver_manager.chrome import ChromeDriverManager
+def wait_for_new_dat_file(start_time):
 
-        print("🌐 Starting TI Visualizer via Selenium...")
-        
-        options = webdriver.ChromeOptions()
-        options.add_argument(r"--user-data-dir=C:\SeleniumTIProfile")
-        options.add_argument("--profile-directory=Default")
-        options.add_argument("--start-maximized")
-        options.add_argument("--disable-blink-features=AutomationControlled")
-        
-        prefs = {
-            "download.default_directory": self.cfg.DAT_SOURCE_DIR,
-            "download.prompt_for_download": False,
-            "safebrowsing.enabled": True
-        }
-        options.add_experimental_option("prefs", prefs)
+    timeout = RECORD_DURATION_SEC + DOWNLOAD_BUFFER
+    deadline = start_time + timeout
 
-        driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-        wait = WebDriverWait(driver, 15)
+    print("Waiting for new .dat file...")
 
-        script_start_time = time.time()
+    while time.time() < deadline:
 
-        try:
-            driver.get("https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/")
-            time.sleep(12)
+        dat_files = glob.glob(os.path.join(DAT_SOURCE_DIR, "*.dat"))
 
-            for selector in [(By.ID, "consent_prompt_submit"), 
-                             (By.XPATH, "//paper-button[contains(text(),'CLOSE')] | //button[contains(text(),'CLOSE')]")]:
-                try: wait.until(EC.element_to_be_clickable(selector)).click()
-                except: pass
+        for f in dat_files:
 
-            driver.execute_script("""
-                var element = document.getElementById(arguments[0]);
-                element.selectedValue = arguments[1];
-                element.dispatchEvent(new Event('change'));
-            """, "ti_widget_droplist_platform", self.cfg.PLATFORM_VALUE)
-            time.sleep(2)
+            if os.path.getmtime(f) >= start_time:
+                return f
 
-            driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.XPATH, "//span[contains(text(),'Options')]"))))
-            driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.XPATH, "//li[.//td[contains(text(),'Serial Port')]]"))))
-            time.sleep(5)
+        time.sleep(1)
 
-            for widget_id, port_name in self.cfg.SERIAL_PORTS.items():
-                driver.execute_script("""
-                    var widget = document.getElementById(arguments[0]);
-                    var options = widget.querySelectorAll('option');
-                    for (var i = 0; i < options.length; i++) {
-                        if (options[i].textContent.includes(arguments[1])) {
-                            widget.selectedValue = options[i].value;
-                            widget.dispatchEvent(new CustomEvent('selected-value-changed'));
-                            widget.dispatchEvent(new Event('change', { bubbles: true }));
-                        }
+    return None
+
+
+def move_dat_file(filepath):
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    experiment_folder = os.path.join(
+        DAT_DEST_DIR,
+        f"{timestamp}_{EXPERIMENT_NAME}"
+    )
+
+    os.makedirs(experiment_folder, exist_ok=True)
+
+    filename = os.path.basename(filepath)
+    destination = os.path.join(experiment_folder, filename)
+
+    shutil.move(filepath, destination)
+
+    print("File moved to:", destination)
+
+    return destination
+
+
+# --------------------------------------------------
+# PARSER
+# --------------------------------------------------
+
+def parse_dat_file(dat_file):
+
+    with open(dat_file, "rb") as fp:
+        allBinData = fp.read()
+
+    readNumBytes = len(allBinData)
+
+    totalBytesParsed = 0
+
+    frames_points = []
+    frames_velocity = []
+
+    numFramesParsed = 0
+
+    while totalBytesParsed < readNumBytes:
+
+        result = parser_one_mmw_demo_output_packet(
+            allBinData[totalBytesParsed:],
+            readNumBytes - totalBytesParsed
+        )
+
+        parser_result = result[0]
+
+        if parser_result != 0:
+            break
+
+        headerStartIndex = result[1]
+        totalPacketNumBytes = result[2]
+        numDetObj = result[3]
+
+        detectedX = result[6]
+        detectedY = result[7]
+        detectedZ = result[8]
+        detectedV = result[9]
+
+        totalBytesParsed += headerStartIndex + totalPacketNumBytes
+
+        numFramesParsed += 1
+
+        if numDetObj > 0:
+
+            points = np.column_stack((
+                detectedX[:numDetObj],
+                detectedY[:numDetObj],
+                detectedZ[:numDetObj]
+            ))
+
+            velocities = np.array(detectedV[:numDetObj])
+
+            frames_points.append(points)
+            frames_velocity.append(velocities)
+
+        else:
+
+            frames_points.append(np.empty((0, 3)))
+            frames_velocity.append(np.array([]))
+
+    print("Total frames parsed:", numFramesParsed)
+
+    return frames_points, frames_velocity
+
+
+# --------------------------------------------------
+# DATA PROCESSING
+# --------------------------------------------------
+
+def compute_range_frames(frames_points):
+
+    time_axis = []
+    range_frames = []
+
+    for i, points in enumerate(frames_points):
+
+        time_axis.append(i * FRAME_PERIOD)
+
+        if len(points) > 0:
+
+            ranges = np.sqrt(
+                points[:,0]**2 +
+                points[:,1]**2 +
+                points[:,2]**2
+            )
+
+            range_frames.append(ranges)
+
+        else:
+
+            range_frames.append(np.array([]))
+
+    return np.array(time_axis), range_frames
+
+
+def flatten_data(time_axis, frames_points, frames_velocity):
+
+    all_times = []
+    all_velocities = []
+    all_ranges = []
+
+    for i, vels in enumerate(frames_velocity):
+
+        if len(vels) > 0:
+
+            pts = frames_points[i]
+
+            rngs = np.sqrt(
+                pts[:,0]**2 +
+                pts[:,1]**2 +
+                pts[:,2]**2
+            )
+
+            all_times.extend([time_axis[i]] * len(vels))
+            all_velocities.extend(vels)
+            all_ranges.extend(rngs)
+
+    return (
+        np.array(all_times),
+        np.array(all_velocities),
+        np.array(all_ranges)
+    )
+
+
+# --------------------------------------------------
+# RECORDING
+# --------------------------------------------------
+
+if RECORD_LIVE:
+
+    from selenium import webdriver
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    from webdriver_manager.chrome import ChromeDriverManager
+
+    print("Recording live data from TI Visualizer...")
+
+    options = webdriver.ChromeOptions()
+
+    options.add_argument(r"--user-data-dir=C:\SeleniumTIProfile")
+    options.add_argument("--profile-directory=Default")
+    options.add_argument("--start-maximized")
+    options.add_argument("--disable-blink-features=AutomationControlled")
+
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=options
+    )
+
+    wait = WebDriverWait(driver, 15)
+
+    driver.get(
+        "https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/"
+    )
+
+    time.sleep(12)
+
+    try:
+        wait.until(EC.element_to_be_clickable(
+            (By.ID, "consent_prompt_submit"))).click()
+    except:
+        pass
+
+    try:
+        wait.until(EC.element_to_be_clickable(
+            (By.XPATH,
+             "//paper-button[contains(text(),'CLOSE')] | "
+             "//button[contains(text(),'CLOSE')]"))).click()
+    except:
+        pass
+
+    driver.execute_script("""
+        var element = document.getElementById(arguments[0]);
+        element.selectedValue = arguments[1];
+        element.dispatchEvent(new Event('change'));
+    """, "ti_widget_droplist_platform", PLATFORM_VALUE)
+
+    time.sleep(2)
+
+    options_menu = wait.until(EC.presence_of_element_located(
+        (By.XPATH, "//span[contains(text(),'Options')]")
+    ))
+
+    driver.execute_script("arguments[0].click();", options_menu)
+
+    serial_item = wait.until(EC.presence_of_element_located(
+        (By.XPATH, "//li[.//td[contains(text(),'Serial Port')]]")
+    ))
+
+    driver.execute_script("arguments[0].click();", serial_item)
+
+    time.sleep(5)
+
+    for widget_id, port_name in SERIAL_PORTS.items():
+
+        success = False
+
+        for _ in range(10):
+
+            res = driver.execute_script("""
+                var widget = document.getElementById(arguments[0]);
+                if (!widget) return "missing";
+                var options = widget.querySelectorAll('option');
+                for (var i = 0; i < options.length; i++) {
+                    if (options[i].textContent.includes(arguments[1])) {
+                        widget.selectedValue = options[i].value;
+                        widget.dispatchEvent(
+                            new CustomEvent('selected-value-changed')
+                        );
+                        widget.dispatchEvent(
+                            new Event('change', { bubbles: true })
+                        );
+                        return "ok";
                     }
-                """, widget_id, port_name)
-                time.sleep(1)
+                }
+                return "loading";
+            """, widget_id, port_name)
 
-            driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.ID, "btnOK"))))
-            time.sleep(3)
-            driver.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.XPATH, "//paper-button[contains(.,'Send Config')] | //paper-material[contains(.,'Send Config')]"))))
-            time.sleep(5)
-
-            driver.execute_script("arguments[0].click();", wait.until(EC.presence_of_element_located((By.XPATH, "//paper-tab[@id='tab_1'] | //paper-tab[contains(., 'Plots')]"))))
-            time.sleep(3)
-
-            for wid, val in [("ti_widget_textbox_record_time", self.cfg.RECORD_DURATION_SEC),
-                             ("ti_widget_textbox_record_file_size_limit", self.cfg.FILE_SIZE_MB)]:
-                driver.execute_script("""
-                    var input = document.getElementById(arguments[0]).querySelector('input');
-                    input.value = arguments[1];
-                    input.dispatchEvent(new Event('input', { bubbles: true }));
-                    input.dispatchEvent(new Event('change', { bubbles: true }));
-                """, wid, str(val))
-
-            record_btn_id = "ti_widget_button_record"
-            driver.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.ID, record_btn_id))))
-            print(f"🔴 Recording started for {self.cfg.RECORD_DURATION_SEC} seconds...")
-            time.sleep(self.cfg.RECORD_DURATION_SEC)
-            
-            driver.execute_script("arguments[0].click();", wait.until(EC.element_to_be_clickable((By.ID, record_btn_id))))
-            print("⏹️ Recording stopped.")
-        except Exception as e:
-            print(f"Selenium Error: {e}")
-
-        return self._wait_and_move_file(script_start_time)
-
-    def _wait_and_move_file(self, start_time):
-        print("⏳ Waiting for file download to complete...")
-        elapsed = 0
-        
-        while elapsed < self.cfg.DOWNLOAD_TIMEOUT_SEC:
-            files = glob.glob(os.path.join(self.cfg.DAT_SOURCE_DIR, '*.dat'))
-            if files:
-                latest_file = max(files, key=os.path.getmtime)
-                if os.path.getmtime(latest_file) > start_time:
-                    time.sleep(1)
-                    
-                    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                    exp_folder = os.path.join(self.cfg.DAT_DEST_DIR, f"{self.cfg.EXPERIMENT_NAME}_{timestamp}")
-                    os.makedirs(exp_folder, exist_ok=True)
-                    
-                    dest_file = os.path.join(exp_folder, os.path.basename(latest_file))
-                    shutil.move(latest_file, dest_file)
-                    print(f"✅ Success! Moved new file to: {dest_file}")
-                    return dest_file
-            
-            time.sleep(1)
-            elapsed += 1
-            
-        raise FileNotFoundError("❌ Timeout: No new .dat file appeared in Downloads folder.")
-
-    def get_latest_offline_file(self):
-        folders = sorted([os.path.join(self.cfg.DAT_DEST_DIR, d) for d in os.listdir(self.cfg.DAT_DEST_DIR) 
-                          if os.path.isdir(os.path.join(self.cfg.DAT_DEST_DIR, d))], 
-                         key=os.path.getmtime, reverse=True)
-        if not folders: raise FileNotFoundError("No experiment folders found.")
-        
-        dat_files = glob.glob(os.path.join(folders[0], '*.dat'))
-        if not dat_files: raise FileNotFoundError(f"No .dat files in {folders[0]}")
-        
-        return max(dat_files, key=os.path.getmtime)
-
-
-# -----------------------------
-# 3. PARSER CLASS
-# -----------------------------
-class RadarParser:
-    def __init__(self, config):
-        self.cfg = config
-        self.frames_points = []
-        self.frames_velocity = []
-        self.time_axis = []
-        self.range_frames = []
-
-    def parse(self, dat_file):
-        print(f"🛠️ Parsing data from: {dat_file}")
-        with open(dat_file, 'rb') as fp:
-            allBinData = fp.read()
-            
-        readNumBytes = len(allBinData)
-        totalBytesParsed = 0
-        numFramesParsed = 0
-
-        while totalBytesParsed < readNumBytes:
-            try:
-                result = parser_one_mmw_demo_output_packet(allBinData[totalBytesParsed:], readNumBytes - totalBytesParsed)
-                parser_result, headerStartIndex, totalPacketNumBytes, numDetObj = result[:4]
-                
-                if parser_result != 0: break
-
-                if numDetObj > 0:
-                    detectedX_array, detectedY_array, detectedZ_array, detectedV_array = result[6:10]
-                    points = np.column_stack((detectedX_array[:numDetObj], detectedY_array[:numDetObj], detectedZ_array[:numDetObj]))
-                    self.frames_points.append(points)
-                    self.frames_velocity.append(np.array(detectedV_array[:numDetObj]))
-                else:
-                    self.frames_points.append(np.empty((0,3)))
-                    self.frames_velocity.append(np.array([]))
-
-                totalBytesParsed += (headerStartIndex + totalPacketNumBytes)
-                numFramesParsed += 1
-            except Exception as e:
-                print(f"Parsing ended or encountered error: {e}")
+            if res == "ok":
+                success = True
                 break
 
-        print(f"📊 Total frames parsed: {numFramesParsed}")
-        self._compute_metrics()
+            time.sleep(1)
 
-    def _compute_metrics(self):
-        for i, points in enumerate(self.frames_points):
-            self.time_axis.append(i * self.cfg.FRAME_PERIOD)
-            if len(points) > 0:
-                self.range_frames.append(np.sqrt(points[:,0]**2 + points[:,1]**2 + points[:,2]**2))
-            else:
-                self.range_frames.append(np.array([]))
-        self.time_axis = np.array(self.time_axis)
+        if not success:
+            print("Failed to set", port_name)
 
+    driver.execute_script(
+        "arguments[0].click();",
+        wait.until(EC.presence_of_element_located((By.ID, "btnOK")))
+    )
 
-# -----------------------------
-# 4. VISUALIZER CLASS
-# -----------------------------
-class RadarVisualizer:
-    def __init__(self, parser):
-        self.parser = parser
-        self.time_axis = parser.time_axis
-        self.frames_points = parser.frames_points
-        self.frames_velocity = parser.frames_velocity
-        self.range_frames = parser.range_frames
-        
-        self.all_times, self.all_vels, self.all_ranges = [], [], []
-        self._flatten_data()
+    time.sleep(3)
 
-    def _flatten_data(self):
-        for i, vels in enumerate(self.frames_velocity):
-            if len(vels) > 0:
-                pts = self.frames_points[i]
-                rngs = np.sqrt(pts[:,0]**2 + pts[:,1]**2 + pts[:,2]**2)
-                self.all_times.extend([self.time_axis[i]] * len(vels))
-                self.all_vels.extend(vels)
-                self.all_ranges.extend(rngs)
+    send_xpath = (
+        "//paper-button[contains(.,'Send Config')] | "
+        "//paper-material[contains(.,'Send Config')]"
+    )
 
-        self.all_times = np.array(self.all_times)
-        self.all_vels = np.array(self.all_vels)
-        self.all_ranges = np.array(self.all_ranges)
+    driver.execute_script(
+        "arguments[0].click();",
+        wait.until(EC.element_to_be_clickable((By.XPATH, send_xpath)))
+    )
 
-    def save_individual_plots(self, dat_path):
-        """Saves three separate charts to the same folder as the .dat file."""
-        if len(self.all_times) == 0:
-            print("No data points available for plotting.")
-            return
+    time.sleep(5)
 
-        output_dir = os.path.dirname(dat_path)
-        base_name = os.path.splitext(os.path.basename(dat_path))[0]
+    plots_tab_xpath = (
+        "//paper-tab[@id='tab_1'] | "
+        "//paper-tab[contains(., 'Plots')]"
+    )
 
-        # -----------------------------
-        # Plot 1: Doppler Velocity Profile
-        # -----------------------------
-        fig, ax = plt.subplots(figsize=(14, 5))
-        v_max = max(abs(self.all_vels.min()) if len(self.all_vels) else 0,
-                    abs(self.all_vels.max()) if len(self.all_vels) else 0, 0.1)
-        norm = mcolors.TwoSlopeNorm(vmin=-v_max, vcenter=0, vmax=v_max)
+    driver.execute_script(
+        "arguments[0].click();",
+        wait.until(EC.presence_of_element_located((By.XPATH, plots_tab_xpath)))
+    )
 
-        sc = ax.scatter(self.all_times, self.all_vels, c=self.all_vels, cmap='RdBu_r',
-                        norm=norm, s=12, alpha=0.7, edgecolors='none')
-        fig.colorbar(sc, ax=ax, label="Radial Velocity (m/s)")
-        ax.axhline(0, color='black', linestyle='--', linewidth=1, alpha=0.5)
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Velocity (m/s)")
-        ax.set_title("Doppler Velocity Profile")
-        ax.grid(True, linestyle=':', alpha=0.6)
-        fig.tight_layout()
-        fig.savefig(os.path.join(output_dir, f"{base_name}_velocity.png"), dpi=300, bbox_inches='tight')
-        plt.close(fig)
-        print(f"💾 Saved: {base_name}_velocity.png")
+    time.sleep(3)
 
-        # -----------------------------
-        # Plot 2: Micro-Doppler Signature
-        # -----------------------------
-        fig, ax = plt.subplots(figsize=(14, 5))
-        h_v, x_v, y_v = np.histogram2d(self.all_times, self.all_vels, bins=[600, 200])
-        h_v_smooth = gaussian_filter(h_v, sigma=1.5)
+    for wid, val in [
+        ("ti_widget_textbox_record_time", RECORD_DURATION_SEC),
+        ("ti_widget_textbox_record_file_size_limit", FILE_SIZE_MB)
+    ]:
 
-        im = ax.imshow(h_v_smooth.T, origin='lower', aspect='auto',
-                       extent=[x_v[0], x_v[-1], y_v[0], y_v[-1]],
-                       cmap='turbo', norm=mcolors.PowerNorm(gamma=0.4))
-        ax.set_title("Gradient Micro-Doppler Signature (VT Profile)")
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Velocity (m/s)")
-        fig.colorbar(im, ax=ax, label='Signal Density')
-        fig.tight_layout()
-        fig.savefig(os.path.join(output_dir, f"{base_name}_micro_doppler.png"), dpi=300, bbox_inches='tight')
-        plt.close(fig)
-        print(f"💾 Saved: {base_name}_micro_doppler.png")
+        driver.execute_script("""
+            var container = document.getElementById(arguments[0]);
+            var input = container.querySelector('input');
+            input.value = arguments[1];
+            input.dispatchEvent(new Event('input', { bubbles: true }));
+            input.dispatchEvent(new Event('change', { bubbles: true }));
+        """, wid, str(val))
 
-        # -----------------------------
-        # Plot 3: Range-Time Intensity
-        # -----------------------------
-        fig, ax = plt.subplots(figsize=(14, 5))
-        h_r, x_r, y_r = np.histogram2d(self.all_times, self.all_ranges, bins=[600, 250])
-        h_r_smooth = gaussian_filter(h_r, sigma=1.2)
+    record_btn = "ti_widget_button_record"
 
-        im = ax.imshow(h_r_smooth.T, origin='lower', aspect='auto',
-                       extent=[x_r[0], x_r[-1], y_r[0], y_r[-1]],
-                       cmap='turbo', norm=mcolors.LogNorm())
-        ax.set_title("Gradient Range-Time Intensity (RT Profile)")
-        ax.set_xlabel("Time (s)")
-        ax.set_ylabel("Range (m)")
-        ax.set_ylim(0, 8)
-        fig.colorbar(im, ax=ax, label='Intensity')
-        fig.tight_layout()
-        fig.savefig(os.path.join(output_dir, f"{base_name}_rti.png"), dpi=300, bbox_inches='tight')
-        plt.close(fig)
-        print(f"💾 Saved: {base_name}_rti.png")
+    record_start_time = time.time()
 
-        print(f"✅ All 3 plots saved to: {output_dir}")
+    driver.execute_script(
+        "arguments[0].click();",
+        wait.until(EC.element_to_be_clickable((By.ID, record_btn)))
+    )
+
+    print("Recording started")
+
+    time.sleep(RECORD_DURATION_SEC)
+
+    driver.execute_script(
+        "arguments[0].click();",
+        wait.until(EC.element_to_be_clickable((By.ID, record_btn)))
+    )
+
+    print("Recording stopped")
 
 
-# -----------------------------
-# 5. MAIN EXECUTION
-# -----------------------------
-if __name__ == "__main__":
-    # 1. Load Config
-    cfg = Config()
-    
-    # 2. Setup Recorder and get File
-    recorder = RadarRecorder(cfg)
-    if cfg.RECORD_LIVE:
-        dat_filepath = recorder.record_and_fetch_file()
-    else:
-        dat_filepath = recorder.get_latest_offline_file()
-        print(f"📁 Using offline file: {dat_filepath}")
+# --------------------------------------------------
+# FILE HANDLING
+# --------------------------------------------------
 
-    # 3. Parse Data
-    parser = RadarParser(cfg)
-    parser.parse(dat_filepath)
+new_file = wait_for_new_dat_file(record_start_time)
 
-    # 4. Visualize and Save
-    if len(parser.frames_points) > 0:
-        print("🎨 Generating visualizations...")
-        viz = RadarVisualizer(parser)
-        viz.save_individual_plots(dat_filepath)
-    else:
-        print("❌ No data to plot.")
+if not new_file:
+    raise FileNotFoundError("No new dat file found")
+
+dat_file = move_dat_file(new_file)
+
+
+# --------------------------------------------------
+# PARSE DATA
+# --------------------------------------------------
+
+frames_points, frames_velocity = parse_dat_file(dat_file)
+
+time_axis, range_frames = compute_range_frames(frames_points)
+
+all_times, all_velocities, all_ranges = flatten_data(
+    time_axis,
+    frames_points,
+    frames_velocity
+)
+
+
+# --------------------------------------------------
+# SAVE PATH
+# --------------------------------------------------
+
+output_dir = os.path.dirname(dat_file)
+base_name = os.path.splitext(os.path.basename(dat_file))[0]
+
+
+def save_plot(name):
+
+    path = os.path.join(output_dir, f"{base_name}_{name}.png")
+
+    plt.savefig(path, dpi=300, bbox_inches="tight")
+    plt.close()
+
+    print("Saved:", path)
+
+
+# --------------------------------------------------
+# RANGE TIME INTENSITY
+# --------------------------------------------------
+
+plt.figure(figsize=(14,5))
+
+h, x, y = np.histogram2d(all_times, all_ranges, bins=[600,250])
+
+h = gaussian_filter(h, sigma=1.2)
+
+plt.imshow(
+    h.T,
+    origin="lower",
+    aspect="auto",
+    extent=[x[0], x[-1], y[0], y[-1]],
+    cmap="turbo",
+    norm=mcolors.LogNorm()
+)
+
+plt.xlabel("Time (s)")
+plt.ylabel("Range (m)")
+plt.title("Range-Time Intensity")
+
+plt.colorbar(label="Intensity")
+
+save_plot("rti")
+
+
+# --------------------------------------------------
+# RANGE VS TIME
+# --------------------------------------------------
+
+plt.figure(figsize=(14,5))
+
+for i, rngs in enumerate(range_frames):
+
+    if len(rngs) > 0:
+        plt.scatter([time_axis[i]] * len(rngs), rngs, s=5, alpha=0.6)
+
+plt.xlabel("Time (s)")
+plt.ylabel("Range (m)")
+plt.title("Range vs Time")
+
+plt.grid(True)
+
+save_plot("range_vs_time")
+
+
+# --------------------------------------------------
+# VELOCITY HEXBIN
+# --------------------------------------------------
+
+plt.figure(figsize=(14,5))
+
+hb = plt.hexbin(
+    all_times,
+    all_velocities,
+    gridsize=(80,40),
+    cmap="magma",
+    mincnt=1
+)
+
+plt.colorbar(hb, label="Reflection Density")
+
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+
+plt.title("Velocity Density")
+
+save_plot("velocity_hexbin")
+
+
+# --------------------------------------------------
+# RANGE DOPPLER
+# --------------------------------------------------
+
+plt.figure(figsize=(10,6))
+
+plt.hist2d(
+    all_ranges,
+    all_velocities,
+    bins=[50,50],
+    cmap="viridis",
+    cmin=1
+)
+
+plt.colorbar(label="Point Count")
+
+plt.xlabel("Range (m)")
+plt.ylabel("Velocity (m/s)")
+
+plt.title("Range-Doppler Distribution")
+
+save_plot("range_doppler")
+
+
+print("\nProcessing complete")
