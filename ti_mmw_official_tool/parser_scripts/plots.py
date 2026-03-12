@@ -107,7 +107,7 @@ print("Total frames parsed:", numFramesParsed)
 # RANGE VS TIME DATA STRUCTURE
 ###############################################################################
 
-frame_period = 0.05  # seconds (adjust if you know actual frameCfg)
+frame_period = 0.1  # seconds (adjust if you know actual frameCfg)
 time_axis = []
 range_frames = []
 
