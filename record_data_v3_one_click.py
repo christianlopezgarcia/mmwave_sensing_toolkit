@@ -420,23 +420,25 @@ all_times, all_velocities, all_ranges = flatten_data(
 output_dir = os.path.dirname(dat_file)
 base_name = os.path.splitext(os.path.basename(dat_file))[0]
 
+# --------------------------------------------------
+# PLOTTING AND SAVING
+# --------------------------------------------------
 
-def save_plot(name):
-    path = os.path.join(output_dir, f"{base_name}_{name}.png")
+# Helper to save plots with numbering
+def save_plot(index, description):
+    filename = f"{index:02d}_{description}.png"
+    path = os.path.join(output_dir, filename)
     plt.savefig(path, dpi=300, bbox_inches="tight")
     plt.close()
     print("Saved:", path)
 
 
-# --------------------------------------------------
-# RANGE TIME INTENSITY
-# --------------------------------------------------
-
+# ------------------------------
+# 01 - Range-Time Intensity
+# ------------------------------
 plt.figure(figsize=(14,5))
-
 h, x, y = np.histogram2d(all_times, all_ranges, bins=[600,250])
 h = gaussian_filter(h, sigma=1.2)
-
 plt.imshow(
     h.T,
     origin="lower",
@@ -445,61 +447,17 @@ plt.imshow(
     cmap="turbo",
     norm=mcolors.LogNorm()
 )
-
 plt.xlabel("Time (s)")
 plt.ylabel("Range (m)")
 plt.title("Range-Time Intensity")
 plt.colorbar(label="Intensity")
-
-save_plot("rti")
-
-
-# --------------------------------------------------
-# RANGE VS TIME
-# --------------------------------------------------
-
-plt.figure(figsize=(14,5))
-
-for i, rngs in enumerate(range_frames):
-    if len(rngs) > 0:
-        plt.scatter([time_axis[i]] * len(rngs), rngs, s=5, alpha=0.6)
-
-plt.xlabel("Time (s)")
-plt.ylabel("Range (m)")
-plt.title("Range vs Time")
-plt.grid(True)
-
-save_plot("range_vs_time")
+save_plot(1, "range_time_intensity")
 
 
-# --------------------------------------------------
-# VELOCITY HEXBIN
-# --------------------------------------------------
-
-plt.figure(figsize=(14,5))
-
-hb = plt.hexbin(
-    all_times,
-    all_velocities,
-    gridsize=(80,40),
-    cmap="magma",
-    mincnt=1
-)
-
-plt.colorbar(hb, label="Reflection Density")
-plt.xlabel("Time (s)")
-plt.ylabel("Velocity (m/s)")
-plt.title("Velocity Density")
-
-save_plot("velocity_hexbin")
-
-
-# --------------------------------------------------
-# RANGE DOPPLER
-# --------------------------------------------------
-
+# ------------------------------
+# 02 - Micro-Doppler (Range vs Velocity)
+# ------------------------------
 plt.figure(figsize=(10,6))
-
 plt.hist2d(
     all_ranges,
     all_velocities,
@@ -507,13 +465,75 @@ plt.hist2d(
     cmap="viridis",
     cmin=1
 )
-
-plt.colorbar(label="Point Count")
 plt.xlabel("Range (m)")
 plt.ylabel("Velocity (m/s)")
-plt.title("Range-Doppler Distribution")
+plt.title("Range-Doppler / Micro-Doppler")
+plt.colorbar(label="Point Count")
+save_plot(2, "micro_doppler")
 
-save_plot("range_doppler")
+
+# ------------------------------
+# 03 - Velocity Trends over Time
+# ------------------------------
+plt.figure(figsize=(14,5))
+plt.hexbin(
+    all_times,
+    all_velocities,
+    gridsize=(80,40),
+    cmap="magma",
+    mincnt=1
+)
+plt.xlabel("Time (s)")
+plt.ylabel("Velocity (m/s)")
+plt.title("Velocity Trends")
+plt.colorbar(label="Reflection Density")
+save_plot(3, "velocity_trends")
 
 
-print("\n✅ Processing complete")
+# ------------------------------
+# 04 - Range vs Time Scatter
+# ------------------------------
+plt.figure(figsize=(14,5))
+for i, rngs in enumerate(range_frames):
+    if len(rngs) > 0:
+        plt.scatter([time_axis[i]] * len(rngs), rngs, s=5, alpha=0.6)
+plt.xlabel("Time (s)")
+plt.ylabel("Range (m)")
+plt.title("Range vs Time Scatter")
+plt.grid(True)
+save_plot(4, "range_vs_time_scatter")
+
+
+# ------------------------------
+# 05 - Reflection Density Histogram
+# ------------------------------
+plt.figure(figsize=(12,6))
+plt.hist(all_ranges, bins=50, alpha=0.7, label="Range")
+plt.hist(all_velocities, bins=50, alpha=0.7, label="Velocity")
+plt.xlabel("Value")
+plt.ylabel("Count")
+plt.title("Reflection Density Histogram")
+plt.legend()
+save_plot(5, "reflection_density")
+
+
+# ------------------------------
+# 06 - Velocity Histogram
+# ------------------------------
+plt.figure(figsize=(12,6))
+plt.hist(all_velocities, bins=50, color="orange", alpha=0.8)
+plt.xlabel("Velocity (m/s)")
+plt.ylabel("Count")
+plt.title("Velocity Distribution")
+save_plot(6, "velocity_histogram")
+
+
+# ------------------------------
+# 07 - Optional: Range Histogram
+# ------------------------------
+plt.figure(figsize=(12,6))
+plt.hist(all_ranges, bins=50, color="green", alpha=0.8)
+plt.xlabel("Range (m)")
+plt.ylabel("Count")
+plt.title("Range Distribution")
+save_plot(7, "range_histogram")
