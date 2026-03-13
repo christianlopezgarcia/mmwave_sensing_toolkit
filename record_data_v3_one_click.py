@@ -21,7 +21,7 @@ from ti_mmw_official_tool.parser_scripts.parser_mmw_demo import parser_one_mmw_d
 # --------------------------------------------------
 
 RECORD_LIVE = True
-EXPERIMENT_NAME = "test2"
+EXPERIMENT_NAME = "walk around in room"
 
 DAT_SOURCE_DIR = r"C:\Users\c1op3\Downloads"
 
@@ -433,25 +433,25 @@ def save_plot(index, description):
     print("Saved:", path)
 
 
-# ------------------------------
-# 01 - Range-Time Intensity
-# ------------------------------
-plt.figure(figsize=(14,5))
-h, x, y = np.histogram2d(all_times, all_ranges, bins=[600,250])
-h = gaussian_filter(h, sigma=1.2)
-plt.imshow(
-    h.T,
-    origin="lower",
-    aspect="auto",
-    extent=[x[0], x[-1], y[0], y[-1]],
-    cmap="turbo",
-    norm=mcolors.LogNorm()
-)
-plt.xlabel("Time (s)")
-plt.ylabel("Range (m)")
-plt.title("Range-Time Intensity")
-plt.colorbar(label="Intensity")
-save_plot(1, "range_time_intensity")
+# # ------------------------------
+# # 01 - Range-Time Intensity
+# # ------------------------------
+# plt.figure(figsize=(14,5))
+# h, x, y = np.histogram2d(all_times, all_ranges, bins=[600,250])
+# h = gaussian_filter(h, sigma=1.2)
+# plt.imshow(
+#     h.T,
+#     origin="lower",
+#     aspect="auto",
+#     extent=[x[0], x[-1], y[0], y[-1]],
+#     cmap="turbo",
+#     norm=mcolors.LogNorm()
+# )
+# plt.xlabel("Time (s)")
+# plt.ylabel("Range (m)")
+# plt.title("Range-Time Intensity")
+# plt.colorbar(label="Intensity")
+# save_plot(1, "range_time_intensity")
 
 
 # ------------------------------
@@ -504,36 +504,36 @@ plt.grid(True)
 save_plot(4, "range_vs_time_scatter")
 
 
-# ------------------------------
-# 05 - Reflection Density Histogram
-# ------------------------------
-plt.figure(figsize=(12,6))
-plt.hist(all_ranges, bins=50, alpha=0.7, label="Range")
-plt.hist(all_velocities, bins=50, alpha=0.7, label="Velocity")
-plt.xlabel("Value")
-plt.ylabel("Count")
-plt.title("Reflection Density Histogram")
-plt.legend()
-save_plot(5, "reflection_density")
+# # ------------------------------
+# # 05 - Reflection Density Histogram
+# # ------------------------------
+# plt.figure(figsize=(12,6))
+# plt.hist(all_ranges, bins=50, alpha=0.7, label="Range")
+# plt.hist(all_velocities, bins=50, alpha=0.7, label="Velocity")
+# plt.xlabel("Value")
+# plt.ylabel("Count")
+# plt.title("Reflection Density Histogram")
+# plt.legend()
+# save_plot(5, "reflection_density")
 
 
-# ------------------------------
-# 06 - Velocity Histogram
-# ------------------------------
-plt.figure(figsize=(12,6))
-plt.hist(all_velocities, bins=50, color="orange", alpha=0.8)
-plt.xlabel("Velocity (m/s)")
-plt.ylabel("Count")
-plt.title("Velocity Distribution")
-save_plot(6, "velocity_histogram")
+# # ------------------------------
+# # 06 - Velocity Histogram
+# # ------------------------------
+# plt.figure(figsize=(12,6))
+# plt.hist(all_velocities, bins=50, color="orange", alpha=0.8)
+# plt.xlabel("Velocity (m/s)")
+# plt.ylabel("Count")
+# plt.title("Velocity Distribution")
+# save_plot(6, "velocity_histogram")
 
 
-# ------------------------------
-# 07 - Optional: Range Histogram
-# ------------------------------
-plt.figure(figsize=(12,6))
-plt.hist(all_ranges, bins=50, color="green", alpha=0.8)
-plt.xlabel("Range (m)")
-plt.ylabel("Count")
-plt.title("Range Distribution")
-save_plot(7, "range_histogram")
+# # ------------------------------
+# # 07 - Optional: Range Histogram
+# # ------------------------------
+# plt.figure(figsize=(12,6))
+# plt.hist(all_ranges, bins=50, color="green", alpha=0.8)
+# plt.xlabel("Range (m)")
+# plt.ylabel("Count")
+# plt.title("Range Distribution")
+# save_plot(7, "range_histogram")
