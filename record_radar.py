@@ -9,7 +9,7 @@ from datetime import datetime
 
 # --- configuration (copy from your script) ---
 RECORD_LIVE = True
-EXPERIMENT_NAME = "walk_up_and_down"
+EXPERIMENT_NAME = ""
 DAT_SOURCE_DIR = r"C:\Users\c1op3\Downloads"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -26,7 +26,7 @@ PLATFORM_VALUE = "xWR68xx_AOP"
 
 RECORD_DURATION_SEC = 10
 FILE_SIZE_MB = 100
-DOWNLOAD_BUFFER = 5
+DOWNLOAD_BUFFER = 10
 
 DEBUG_PORT = 9222
 PROFILE_PATH = r"C:\SeleniumTIProfile"
