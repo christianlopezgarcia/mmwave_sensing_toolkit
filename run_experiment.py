@@ -14,7 +14,9 @@ No interactive windows are opened.
 
 import os
 
-from record_radar import record_dat_file
+import record_radar
+record_radar.EXPERIMENT_NAME = "walk_up_and_down"
+# from record_radar import record_dat_file
 from dat_parser_plots import (
     parse_dat_file,
     compute_range_frames,
@@ -38,7 +40,7 @@ def run_experiment():
     """
 
     # 1. Record and retrieve .dat file path
-    dat_file = record_dat_file()
+    dat_file = record_radar.record_dat_file()
 
     # 2. Determine output directory from the .dat file location
     output_dir = os.path.dirname(dat_file)
@@ -65,6 +67,8 @@ def run_experiment():
         all_ranges     = all_ranges,
         time_axis      = time_axis,
         range_frames   = range_frames,
+        frames_points   = frames_points,   
+        frames_velocity = frames_velocity  
     )
 
     print("Experiment complete. Outputs saved to:", output_dir)
