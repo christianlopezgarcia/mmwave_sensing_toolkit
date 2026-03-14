@@ -9,7 +9,7 @@ from datetime import datetime
 
 # --- configuration (copy from your script) ---
 RECORD_LIVE = True
-EXPERIMENT_NAME = "new_file_system"
+EXPERIMENT_NAME = "walk_up_and_down"
 DAT_SOURCE_DIR = r"C:\Users\c1op3\Downloads"
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
