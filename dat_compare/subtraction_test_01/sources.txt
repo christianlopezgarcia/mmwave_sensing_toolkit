@@ -1,4 +1,0 @@
-Experiment: subtraction_test_01
-Background File: repo\mmwave_sensing_toolkit\dat_directory\20260313_175804_do_nothing\xwr68xx_AOP_processed_stream_2026_03_14T00_57_53_364.dat
-Signal File: repo\mmwave_sensing_toolkit\dat_directory\20260313_180055_wave_up_and_down\xwr68xx_AOP_processed_stream_2026_03_14T01_00_44_312.dat
-Distance Threshold: 0.15 m

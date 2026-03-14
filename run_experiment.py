@@ -1,7 +1,7 @@
 """
 run_experiment.py
 -----------------
-Full experiment pipeline:  record → parse → save plots.
+Full experiment pipeline: record → parse → save plots.
 
 Usage
 -----
@@ -16,7 +16,7 @@ import os
 
 import record_radar
 record_radar.EXPERIMENT_NAME = "walk_up_and_down"
-# from record_radar import record_dat_file
+
 from dat_parser_plots import (
     parse_dat_file,
     compute_range_frames,
@@ -46,27 +46,36 @@ def run_experiment():
     output_dir = os.path.dirname(dat_file)
     base_name  = os.path.splitext(os.path.basename(dat_file))[0]
 
-    # 3. Parse
-    frames_points, frames_velocity = parse_dat_file(dat_file)
+    # 3. Parse (Updated to catch all 5 arrays)
+    (frames_points, frames_velocity, 
+     frames_azimuth, frames_elevation, frames_snr) = parse_dat_file(dat_file)
 
     # 4. Compute derived data structures
     time_axis, range_frames = compute_range_frames(frames_points)
 
-    all_times, all_velocities, all_ranges = flatten_data(
+    # Flatten all data (Updated to handle Azimuth, Elevation, and SNR)
+    (all_times, all_velocities, all_ranges, 
+     all_azimuths, all_elevations, all_snrs) = flatten_data(
         time_axis,
         frames_points,
         frames_velocity,
+        frames_azimuth,
+        frames_elevation,
+        frames_snr
     )
 
-    # 5. Save all plots to the experiment folder
+    # 5. Save all plots to the experiment folder (Updated with new parameters)
     save_all_plots(
-        output_dir  = output_dir,
-        base_name   = base_name,
-        all_times      = all_times,
-        all_velocities = all_velocities,
-        all_ranges     = all_ranges,
-        time_axis      = time_axis,
-        range_frames   = range_frames,
+        output_dir      = output_dir,
+        base_name       = base_name,
+        all_times       = all_times,
+        all_velocities  = all_velocities,
+        all_ranges      = all_ranges,
+        all_azimuths    = all_azimuths,
+        all_elevations  = all_elevations,
+        all_snrs        = all_snrs,
+        time_axis       = time_axis,
+        range_frames    = range_frames,
         frames_points   = frames_points,   
         frames_velocity = frames_velocity  
     )
