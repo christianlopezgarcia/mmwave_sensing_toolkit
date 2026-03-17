@@ -15,13 +15,14 @@ No interactive windows are opened.
 import os
 
 import record_radar
-record_radar.EXPERIMENT_NAME = "walk_up_and_down"
+record_radar.EXPERIMENT_NAME = "fast_slow_speed_walk_up_and_down_living_room_2ft_apart_take2"
 
 from dat_parser_plots import (
     parse_dat_file,
     compute_range_frames,
     flatten_data,
     save_all_plots,
+    save_all_comparison_plots,
 )
 
 
@@ -78,6 +79,18 @@ def run_experiment():
         range_frames    = range_frames,
         frames_points   = frames_points,   
         frames_velocity = frames_velocity  
+    )
+    save_all_comparison_plots(
+        output_dir      = output_dir,
+        base_name       = base_name,
+        all_times       = all_times,
+        all_velocities  = all_velocities,
+        all_ranges      = all_ranges,
+        all_azimuths    = all_azimuths,
+        all_elevations  = all_elevations,
+        all_snrs        = all_snrs,
+        time_axis       = time_axis,
+        range_frames    = range_frames,
     )
 
     print("Experiment complete. Outputs saved to:", output_dir)

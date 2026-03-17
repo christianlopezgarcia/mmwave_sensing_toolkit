@@ -209,6 +209,143 @@ def plot_velocity_vs_time_scatter(all_times, all_velocities, save_path=None):
     plt.title("Velocity vs Time")
     plt.grid(True)
     _save_or_show(save_path)
+# --------------------------------------------------
+# COMPARISON PLOTS (Stacked Layouts)
+# --------------------------------------------------
+
+def plot_compare_velocity_range(all_times, all_velocities, time_axis, range_frames, save_path=None):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    
+    # Top: Velocity
+    sc = ax1.scatter(all_times, all_velocities, s=5, c=all_velocities, cmap='viridis')
+    ax1.set_ylabel("Velocity (m/s)")
+    ax1.set_title("Velocity (Top) vs Range (Bottom)")
+    ax1.grid(True, alpha=0.3)
+    
+    # Bottom: Range Scatter
+    for i in range(len(range_frames)):
+        if len(range_frames[i]) > 0:
+            ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:blue')
+    ax2.set_ylabel("Range (m)")
+    ax2.set_xlabel("Time (s)")
+    ax2.grid(True, alpha=0.3)
+
+    plt.tight_layout()
+    _save_or_show(save_path)
+
+def plot_compare_snr_range(all_times, all_snrs, time_axis, range_frames, save_path=None):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    
+    # Top: SNR
+    ax1.scatter(all_times, all_snrs, s=5, c=all_snrs, cmap='plasma')
+    ax1.set_ylabel("SNR")
+    ax1.set_title("SNR (Top) vs Range (Bottom)")
+    ax1.grid(True)
+
+    # Bottom: Range
+    for i in range(len(range_frames)):
+        if len(range_frames[i]) > 0:
+            ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:red')
+    ax2.set_ylabel("Range (m)")
+    ax2.set_xlabel("Time (s)")
+    ax2.grid(True)
+
+    plt.tight_layout()
+    _save_or_show(save_path)
+
+def plot_compare_micro_doppler_range(all_times, all_velocities, time_axis, range_frames, save_path=None):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    
+    # Top: Micro-Doppler Heatmap
+    ax1.hist2d(all_times, all_velocities, bins=[350, 150], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.4))
+    ax1.set_ylabel("Velocity (m/s)")
+    ax1.set_title("Micro-Doppler Intensity (Top) vs Range (Bottom)")
+
+    # Bottom: Range
+    for i in range(len(range_frames)):
+        if len(range_frames[i]) > 0:
+            ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='black', alpha=0.5)
+    ax2.set_ylabel("Range (m)")
+    ax2.set_xlabel("Time (s)")
+
+    plt.tight_layout()
+    _save_or_show(save_path)
+
+def plot_compare_azimuth_range(all_times, all_azimuths, time_axis, range_frames, save_path=None):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    
+    # Top: Azimuth Heatmap
+    ax1.hist2d(all_times, all_azimuths, bins=[350, 180], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.5))
+    ax1.set_ylabel("Azimuth (deg)")
+    ax1.set_title("Azimuth Density (Top) vs Range (Bottom)")
+
+    # Bottom: Range
+    for i in range(len(range_frames)):
+        if len(range_frames[i]) > 0:
+            ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:green')
+    ax2.set_ylabel("Range (m)")
+    ax2.set_xlabel("Time (s)")
+
+    plt.tight_layout()
+    _save_or_show(save_path)
+
+def plot_compare_elevation_range(all_times, all_elevations, time_axis, range_frames, save_path=None):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    
+    # Top: Elevation Heatmap
+    ax1.hist2d(all_times, all_elevations, bins=[350, 180], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.5))
+    ax1.set_ylabel("Elevation (deg)")
+    ax1.set_title("Elevation Density (Top) vs Range (Bottom)")
+
+    # Bottom: Range
+    for i in range(len(range_frames)):
+        if len(range_frames[i]) > 0:
+            ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:purple')
+    ax2.set_ylabel("Range (m)")
+    ax2.set_xlabel("Time (s)")
+
+    plt.tight_layout()
+    _save_or_show(save_path)
+
+def plot_compare_rti_range(all_times, all_ranges, time_axis, range_frames, save_path=None):
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
+    
+    # Top: RTI (Heatmap)
+    ax1.hist2d(all_times, all_ranges, bins=[350, 200], cmap='turbo', norm=mcolors.LogNorm())
+    ax1.set_ylabel("Range Intensity (m)")
+    ax1.set_ylim(0, 10)
+    ax1.set_title("Range Intensity Heatmap (Top) vs Range Scatter (Bottom)")
+
+    # Bottom: Range (Scatter)
+    for i in range(len(range_frames)):
+        if len(range_frames[i]) > 0:
+            ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:orange')
+    ax2.set_ylabel("Range Scatter (m)")
+    ax2.set_xlabel("Time (s)")
+    ax2.set_ylim(0, 10)
+
+    plt.tight_layout()
+    _save_or_show(save_path)
+
+# --------------------------------------------------
+# UPDATED CONVENIENCE SAVER
+# --------------------------------------------------
+
+def save_all_comparison_plots(output_dir, base_name, all_times, all_velocities, all_ranges,
+                              all_azimuths, all_elevations, all_snrs,
+                              time_axis, range_frames):
+    
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    def _path(idx, desc): return os.path.join(output_dir, f"COMPARE_{idx:02d}_{desc}.png")
+
+    plot_compare_velocity_range(all_times, all_velocities, time_axis, range_frames, save_path=_path(1, "vel_vs_range"))
+    plot_compare_snr_range(all_times, all_snrs, time_axis, range_frames, save_path=_path(2, "snr_vs_range"))
+    plot_compare_micro_doppler_range(all_times, all_velocities, time_axis, range_frames, save_path=_path(3, "microDoppler_vs_range"))
+    plot_compare_azimuth_range(all_times, all_azimuths, time_axis, range_frames, save_path=_path(4, "azimuth_vs_range"))
+    plot_compare_elevation_range(all_times, all_elevations, time_axis, range_frames, save_path=_path(5, "elevation_vs_range"))
+    plot_compare_rti_range(all_times, all_ranges, time_axis, range_frames, save_path=_path(6, "rti_vs_range"))
 
 # --------------------------------------------------
 # CONVENIENCE: SAVE ALL STANDARD PLOTS
@@ -272,3 +409,10 @@ if __name__ == "__main__":
     plot_angle_time_intensity(all_times, all_azimuths, "Azimuth vs Time", "Azimuth (deg)")
     plot_angle_time_intensity(all_times, all_elevations, "Elevation vs Time", "Elevation (deg)")
     plot_snr_vs_time_scatter(all_times, all_snrs)
+
+    plot_compare_velocity_range(all_times, all_velocities, time_axis, range_frames)
+    plot_compare_snr_range(all_times, all_snrs, time_axis, range_frames)
+    plot_compare_micro_doppler_range(all_times, all_velocities, time_axis, range_frames)
+    plot_compare_azimuth_range(all_times, all_azimuths, time_axis, range_frames)
+    plot_compare_elevation_range(all_times, all_elevations, time_axis, range_frames)
+    plot_compare_rti_range(all_times, all_ranges, time_axis, range_frames)
