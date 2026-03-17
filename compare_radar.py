@@ -11,15 +11,22 @@ from dat_parser_plots import (
     compute_range_frames,
     find_latest_dat_file,
     flatten_data,
-    save_all_plots
+    save_all_plots,
+    save_all_comparison_plots,
 )
 
 # --------------------------------------------------
 # 1. SETTINGS
 # --------------------------------------------------
-BACKGROUND_PATH = r"repo\mmwave_sensing_toolkit\dat_directory\20260313_181539_do_nothing"
-SIGNAL_PATH     = r"repo\mmwave_sensing_toolkit\dat_directory\20260313_181607_walk_up_and_down"
-EXPERIMENT_NAME = "cleanup_test_01"
+# BACKGROUND_PATH = r"repo\mmwave_sensing_toolkit\dat_directory\20260313_181539_do_nothing"
+# SIGNAL_PATH     = r"repo\mmwave_sensing_toolkit\dat_directory\20260313_181607_walk_up_and_down"
+# BACKGROUND_PATH = r"repo\mmwave_sensing_toolkit\dat_directory\20260314_002832_do_nothing_while_in_fornt_of_radar"
+# SIGNAL_PATH     = r"repo\mmwave_sensing_toolkit\dat_directory\20260314_002956_walk_up_and_down"
+# BACKGROUND_PATH = r"repo\mmwave_sensing_toolkit\dat_directory\20260316_213833_Do_Nothing_Large_Living_Room"
+# SIGNAL_PATH     = r"repo\mmwave_sensing_toolkit\dat_directory\20260316_214811_fast_speed_walk_up_and_down_living_room_2ft_apart_take1"
+BACKGROUND_PATH = r"repo\mmwave_sensing_toolkit\dat_directory\20260316_213833_Do_Nothing_Large_Living_Room"
+SIGNAL_PATH     = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\dat_directory\20260316_215140_fast_slow_speed_walk_up_and_down_living_room_2ft_apart_take2"
+EXPERIMENT_NAME = "LargeLivingRoom_FastAndSlowPace_WalkUpAndDown_TwoSubjects_TwoFeetApartRoughly"
 THRESHOLD_M = 0.25
 
 # --------------------------------------------------
@@ -145,6 +152,13 @@ def run_comparison():
         all_times = cln_t, all_velocities = cln_v, all_ranges = cln_r,
         all_azimuths = cln_az_f, all_elevations = cln_el_f, all_snrs = cln_snr_f,
         time_axis = t_cln, range_frames = r_cln_f, frames_points = cln_f, frames_velocity = cln_v
+    )
+    save_all_comparison_plots(
+        output_dir = output_dir,
+        base_name = "subtracted_final",
+        all_times = cln_t, all_velocities = cln_v, all_ranges = cln_r,
+        all_azimuths = cln_az_f, all_elevations = cln_el_f, all_snrs = cln_snr_f,
+        time_axis = t_cln, range_frames = r_cln_f
     )
 
     print(f"Comparison complete. Results and raw data archived in: {output_dir}")
