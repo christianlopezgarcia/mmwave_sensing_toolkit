@@ -15,7 +15,7 @@ No interactive windows are opened.
 import os
 
 import record_radar
-record_radar.EXPERIMENT_NAME = "fast_slow_speed_walk_up_and_down_living_room_2ft_apart_take2"
+record_radar.EXPERIMENT_NAME = "ClassRoom_SameSpeed_lowertoground_walk1"
 
 from dat_parser_plots import (
     parse_dat_file,
