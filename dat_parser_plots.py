@@ -2,26 +2,31 @@
 dat_parser_plots.py
 -------------------
 Reusable module for parsing TI mmWave .dat files and generating plots.
-Updated to support Azimuth, Elevation, and SNR extraction.
+Updated to support Azimuth, Elevation, SNR extraction, Parallel Chunk Parsing,
+Hardware Clock Unwrapping, and Plot Saving.
 """
 
 import os
 import glob
+import time
+import struct
 import numpy as np
+from datetime import datetime
+import multiprocessing
+from concurrent.futures import ProcessPoolExecutor
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
-from matplotlib.animation import FuncAnimation
-from mpl_toolkits.mplot3d import Axes3D
 
 from ti_mmw_official_tool.parser_scripts.parser_mmw_demo import parser_one_mmw_demo_output_packet
 
 # --------------------------------------------------
 # CONFIGURATION
 # --------------------------------------------------
-FRAME_PERIOD = 0.1
+NUM_CHUNKS = 24  # Threads/Chunks to split the dat file into
+MAGIC_WORD = bytes([2, 1, 4, 3, 6, 5, 8, 7])
 
 # --------------------------------------------------
-# FILE UTILITIES
+# PARSER UTILITIES & MULTIPROCESSING
 # --------------------------------------------------
 
 def find_latest_dat_file(directory_path):
@@ -31,43 +36,70 @@ def find_latest_dat_file(directory_path):
         return None
     return max(list_of_files, key=os.path.getmtime)
 
-# --------------------------------------------------
-# PARSER
-# --------------------------------------------------
-
-def parse_dat_file(dat_file):
+def get_chunk_boundaries(filepath, num_chunks):
     """
-    Parse a TI mmWave .dat binary file into per-frame point clouds,
-    velocity, azimuth, elevation, and SNR arrays.
+    Splits the file into byte ranges, ensuring each chunk starts EXACTLY at a magic word.
     """
-    with open(dat_file, "rb") as fp:
-        allBinData = fp.read()
+    file_size = os.path.getsize(filepath)
+    if file_size == 0:
+        return []
+        
+    chunk_size = file_size // num_chunks
+    boundaries = [0]
+    
+    with open(filepath, 'rb') as f:
+        for i in range(1, num_chunks):
+            target_start = i * chunk_size
+            f.seek(target_start)
+            # Read ahead slightly to find the next clean magic word boundary
+            search_window = f.read(1024 * 1024) 
+            idx = search_window.find(MAGIC_WORD)
+            
+            if idx != -1:
+                boundaries.append(target_start + idx)
+            else:
+                boundaries.append(target_start) 
+                
+    boundaries.append(file_size)
+    
+    # Create start/end tuples for each chunk
+    chunks = [(boundaries[i], boundaries[i+1]) for i in range(len(boundaries)-1) if boundaries[i] != boundaries[i+1]]
+    return chunks
 
-    readNumBytes = len(allBinData)
+def parse_chunk(args):
+    """
+    Worker function to parse a specific byte range of the file.
+    """
+    filepath, start_idx, end_idx = args
+    
+    with open(filepath, 'rb') as f:
+        f.seek(start_idx)
+        chunk_data = f.read(end_idx - start_idx)
+        
+    readNumBytes = len(chunk_data)
     totalBytesParsed = 0
-    numFramesParsed = 0
-
-    frames_points = []
-    frames_velocity = []
-    frames_azimuth = []
-    frames_elevation = []
-    frames_snr = []
+    
+    c_frames_points, c_frames_velocity = [], []
+    c_frames_azimuth, c_frames_elevation = [], []
+    c_frames_snr, c_frames_cycles = [], []
 
     while totalBytesParsed < readNumBytes:
         result = parser_one_mmw_demo_output_packet(
-            allBinData[totalBytesParsed:],
+            chunk_data[totalBytesParsed:],
             readNumBytes - totalBytesParsed
         )
 
-        if result[0] != 0:
+        if result[0] != 0: # TC_FAIL
             break
 
         headerStartIndex = result[1]
         totalPacketNumBytes = result[2]
         numDetObj = result[3]
+        timeCpuCycles = result[-1] # The newly extracted CPU cycles
 
         totalBytesParsed += headerStartIndex + totalPacketNumBytes
-        numFramesParsed += 1
+
+        c_frames_cycles.append(timeCpuCycles)
 
         if numDetObj > 0:
             points = np.column_stack((
@@ -75,36 +107,99 @@ def parse_dat_file(dat_file):
                 result[7][:numDetObj],   # Y
                 result[8][:numDetObj]    # Z
             ))
-            frames_points.append(points)
-            frames_velocity.append(np.array(result[9][:numDetObj]))
-            frames_azimuth.append(np.array(result[11][:numDetObj]))
-            frames_elevation.append(np.array(result[12][:numDetObj]))
-            frames_snr.append(np.array(result[13][:numDetObj]))
+            c_frames_points.append(points)
+            c_frames_velocity.append(np.array(result[9][:numDetObj]))
+            c_frames_azimuth.append(np.array(result[11][:numDetObj]))
+            c_frames_elevation.append(np.array(result[12][:numDetObj]))
+            c_frames_snr.append(np.array(result[13][:numDetObj]))
         else:
-            frames_points.append(np.empty((0, 3)))
-            frames_velocity.append(np.array([]))
-            frames_azimuth.append(np.array([]))
-            frames_elevation.append(np.array([]))
-            frames_snr.append(np.array([]))
+            c_frames_points.append(np.empty((0, 3)))
+            c_frames_velocity.append(np.array([]))
+            c_frames_azimuth.append(np.array([]))
+            c_frames_elevation.append(np.array([]))
+            c_frames_snr.append(np.array([]))
 
-    print("Total frames parsed:", numFramesParsed)
-    return frames_points, frames_velocity, frames_azimuth, frames_elevation, frames_snr
+    return c_frames_points, c_frames_velocity, c_frames_azimuth, c_frames_elevation, c_frames_snr, c_frames_cycles
+
+def parse_dat_file_parallel(dat_file, num_chunks=NUM_CHUNKS):
+    """
+    Main parser driver utilizing multiprocessing.
+    """
+    chunks = get_chunk_boundaries(dat_file, num_chunks)
+    args = [(dat_file, start, end) for start, end in chunks]
+    
+    print(f"Spawning {len(chunks)} parallel workers to parse {dat_file}...")
+    
+    frames_points, frames_velocity = [], []
+    frames_azimuth, frames_elevation = [], []
+    frames_snr, frames_cycles = [], []
+    
+    with ProcessPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        results = list(executor.map(parse_chunk, args))
+        
+    for res in results:
+        frames_points.extend(res[0])
+        frames_velocity.extend(res[1])
+        frames_azimuth.extend(res[2])
+        frames_elevation.extend(res[3])
+        frames_snr.extend(res[4])
+        frames_cycles.extend(res[5])
+        
+    print(f"Complete. Total frames parsed: {len(frames_cycles)}")
+    return frames_points, frames_velocity, frames_azimuth, frames_elevation, frames_snr, frames_cycles
 
 # --------------------------------------------------
-# DATA PROCESSING
+# DATA PROCESSING & HARDWARE CLOCK UNWRAPPING
 # --------------------------------------------------
 
-def compute_range_frames(frames_points):
+def unwrap_hardware_time(frames_cycles):
+    """
+    Unwraps the 32-bit CPU cycle counter to prevent the 21.47 second rollover.
+    Converts cycle count to an absolute continuous time in seconds.
+    """
     time_axis = []
+    rollovers = 0
+    prev_cycle = 0
+    
+    for cycle in frames_cycles:
+        if cycle < prev_cycle and prev_cycle > 2**31:
+            rollovers += 1
+        prev_cycle = cycle
+        
+        # 200 MHz Clock -> seconds
+        absolute_cycles = cycle + (rollovers * (2**32))
+        t_sec = absolute_cycles / 200e6
+        time_axis.append(t_sec)
+        
+    return np.array(time_axis)
+
+# def compute_range_frames(time_axis, frames_points):
+#     range_frames = []
+#     for points in frames_points:
+#         if len(points) > 0:
+#             ranges = np.sqrt(np.sum(points**2, axis=1))
+#             range_frames.append(ranges)
+#         else:
+#             range_frames.append(np.array([]))
+#     return range_frames
+
+def compute_range_frames(time_axis, frames_points):
+    # Normalize the time axis so it starts at 0
+    if len(time_axis) > 0:
+        normalized_time = time_axis - time_axis[0]
+    else:
+        normalized_time = time_axis
+
     range_frames = []
-    for i, points in enumerate(frames_points):
-        time_axis.append(i * FRAME_PERIOD)
+    for points in frames_points:
         if len(points) > 0:
-            ranges = np.sqrt(np.sum(points**2, axis=1))
+            # Use np.linalg.norm for cleaner, optimized Euclidean distance
+            ranges = np.linalg.norm(points, axis=1)
             range_frames.append(ranges)
         else:
             range_frames.append(np.array([]))
-    return np.array(time_axis), range_frames
+            
+    return normalized_time, range_frames
 
 def flatten_data(time_axis, frames_points, frames_velocity, frames_azimuth, frames_elevation, frames_snr):
     """
@@ -135,13 +230,9 @@ def flatten_data(time_axis, frames_points, frames_velocity, frames_azimuth, fram
 # PLOTTING UTILITIES
 # --------------------------------------------------
 
-def _save_or_show(save_path, ani=None):
+def _save_or_show(save_path):
     if save_path:
-        if ani:
-            writer = 'pillow' if save_path.endswith('.gif') else 'ffmpeg'
-            ani.save(save_path, writer=writer)
-        else:
-            plt.savefig(save_path, dpi=300, bbox_inches="tight")
+        plt.savefig(save_path, dpi=300, bbox_inches="tight")
         plt.close()
     else:
         plt.show()
@@ -209,6 +300,7 @@ def plot_velocity_vs_time_scatter(all_times, all_velocities, save_path=None):
     plt.title("Velocity vs Time")
     plt.grid(True)
     _save_or_show(save_path)
+
 # --------------------------------------------------
 # COMPARISON PLOTS (Stacked Layouts)
 # --------------------------------------------------
@@ -216,13 +308,11 @@ def plot_velocity_vs_time_scatter(all_times, all_velocities, save_path=None):
 def plot_compare_velocity_range(all_times, all_velocities, time_axis, range_frames, save_path=None):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     
-    # Top: Velocity
     sc = ax1.scatter(all_times, all_velocities, s=5, c=all_velocities, cmap='viridis')
     ax1.set_ylabel("Velocity (m/s)")
     ax1.set_title("Velocity (Top) vs Range (Bottom)")
     ax1.grid(True, alpha=0.3)
     
-    # Bottom: Range Scatter
     for i in range(len(range_frames)):
         if len(range_frames[i]) > 0:
             ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:blue')
@@ -236,13 +326,11 @@ def plot_compare_velocity_range(all_times, all_velocities, time_axis, range_fram
 def plot_compare_snr_range(all_times, all_snrs, time_axis, range_frames, save_path=None):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     
-    # Top: SNR
     ax1.scatter(all_times, all_snrs, s=5, c=all_snrs, cmap='plasma')
     ax1.set_ylabel("SNR")
     ax1.set_title("SNR (Top) vs Range (Bottom)")
     ax1.grid(True)
 
-    # Bottom: Range
     for i in range(len(range_frames)):
         if len(range_frames[i]) > 0:
             ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:red')
@@ -256,12 +344,10 @@ def plot_compare_snr_range(all_times, all_snrs, time_axis, range_frames, save_pa
 def plot_compare_micro_doppler_range(all_times, all_velocities, time_axis, range_frames, save_path=None):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     
-    # Top: Micro-Doppler Heatmap
     ax1.hist2d(all_times, all_velocities, bins=[350, 150], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.4))
     ax1.set_ylabel("Velocity (m/s)")
     ax1.set_title("Micro-Doppler Intensity (Top) vs Range (Bottom)")
 
-    # Bottom: Range
     for i in range(len(range_frames)):
         if len(range_frames[i]) > 0:
             ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='black', alpha=0.5)
@@ -274,12 +360,10 @@ def plot_compare_micro_doppler_range(all_times, all_velocities, time_axis, range
 def plot_compare_azimuth_range(all_times, all_azimuths, time_axis, range_frames, save_path=None):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     
-    # Top: Azimuth Heatmap
     ax1.hist2d(all_times, all_azimuths, bins=[350, 180], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.5))
     ax1.set_ylabel("Azimuth (deg)")
     ax1.set_title("Azimuth Density (Top) vs Range (Bottom)")
 
-    # Bottom: Range
     for i in range(len(range_frames)):
         if len(range_frames[i]) > 0:
             ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:green')
@@ -292,12 +376,10 @@ def plot_compare_azimuth_range(all_times, all_azimuths, time_axis, range_frames,
 def plot_compare_elevation_range(all_times, all_elevations, time_axis, range_frames, save_path=None):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     
-    # Top: Elevation Heatmap
     ax1.hist2d(all_times, all_elevations, bins=[350, 180], cmap='turbo', norm=mcolors.PowerNorm(gamma=0.5))
     ax1.set_ylabel("Elevation (deg)")
     ax1.set_title("Elevation Density (Top) vs Range (Bottom)")
 
-    # Bottom: Range
     for i in range(len(range_frames)):
         if len(range_frames[i]) > 0:
             ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:purple')
@@ -310,13 +392,11 @@ def plot_compare_elevation_range(all_times, all_elevations, time_axis, range_fra
 def plot_compare_rti_range(all_times, all_ranges, time_axis, range_frames, save_path=None):
     fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     
-    # Top: RTI (Heatmap)
     ax1.hist2d(all_times, all_ranges, bins=[350, 200], cmap='turbo', norm=mcolors.LogNorm())
     ax1.set_ylabel("Range Intensity (m)")
     ax1.set_ylim(0, 10)
     ax1.set_title("Range Intensity Heatmap (Top) vs Range Scatter (Bottom)")
 
-    # Bottom: Range (Scatter)
     for i in range(len(range_frames)):
         if len(range_frames[i]) > 0:
             ax2.scatter(np.ones(len(range_frames[i])) * time_axis[i], range_frames[i], s=5, color='tab:orange')
@@ -373,46 +453,49 @@ def save_all_plots(output_dir, base_name,
 # --------------------------------------------------
 
 if __name__ == "__main__":
+    # Ensure Windows compatibility with multiprocessing
+    multiprocessing.freeze_support()
     
-    # 1. Locate File
-    # your_path = r"C:\Users\c1op3\Downloads"
-    # dat_file = find_latest_dat_file(your_path)
     dat_file = r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_26T06_17_54_793.dat"
-    print(f"Targeting file: {dat_file}")
+    dat_file = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\run_2026-04-01_20-20-16\raw\run_2026-04-01_20-20-16.dat"
     
-    # 2. Parse (Updated to catch all 5 arrays)
-    frames_points, frames_velocity, frames_azimuth, frames_elevation, frames_snr = parse_dat_file(dat_file)
+    # 1. Parse File in Parallel
+    start_time = time.time()
+    frames_points, frames_velocity, frames_azimuth, frames_elevation, frames_snr, frames_cycles = parse_dat_file_parallel(dat_file)
+    print(f"Parsing Time: {time.time() - start_time:.2f} seconds")
 
-    # 3. Compute derived data structures
-    time_axis, range_frames = compute_range_frames(frames_points)
+    # 2. Compute Hardware Timestamps (Unwrapping the 32-bit roll over)
+    time_axis = unwrap_hardware_time(frames_cycles)
+    normalized_time, range_frames = compute_range_frames(time_axis, frames_points)
     
-    # Flatten all data (Updated to catch all 6 flattened arrays)
+    # 3. Flatten all data
     (all_times, all_velocities, all_ranges, 
      all_azimuths, all_elevations, all_snrs) = flatten_data(
-         time_axis, frames_points, frames_velocity, 
+         normalized_time, frames_points, frames_velocity, 
          frames_azimuth, frames_elevation, frames_snr
     )
 
-    # ---------------------------
-    # Display Plots Interactively
-    # ---------------------------
-    
-    # Original Static Plots
-    plot_range_vs_time_scatter(time_axis, range_frames)
-    plot_velocity_vs_time_scatter(all_times, all_velocities)
-    
-    # High-Fidelity Density Maps (Micro-Doppler & RTI)
-    plot_micro_doppler_high_fidelity(all_times, all_velocities)
-    plot_range_time_intensity(all_times, all_ranges)
+    # 4. Setup Output Directory
+    timestamp_str = datetime.now().strftime("%Y_%m_%d_T%H_%M_%S")
+    base_name = os.path.basename(dat_file).replace('.dat', '')
+    save_dir = os.path.join(os.path.dirname(dat_file), f"Plots_{base_name}_{timestamp_str}")
+    os.makedirs(save_dir, exist_ok=True)
+    print(f"Saving output plots to: {save_dir}")
 
-    # NEW: Angular & Signal Strength Plots
-    plot_angle_time_intensity(all_times, all_azimuths, "Azimuth vs Time", "Azimuth (deg)")
-    plot_angle_time_intensity(all_times, all_elevations, "Elevation vs Time", "Elevation (deg)")
-    plot_snr_vs_time_scatter(all_times, all_snrs)
+    # 5. Generate and Save Plots
+    plot_range_vs_time_scatter(normalized_time, range_frames, save_path=os.path.join(save_dir, "range_vs_time.png"))
+    plot_velocity_vs_time_scatter(all_times, all_velocities, save_path=os.path.join(save_dir, "velocity_vs_time.png"))
+    plot_micro_doppler_high_fidelity(all_times, all_velocities, save_path=os.path.join(save_dir, "micro_doppler.png"))
+    plot_range_time_intensity(all_times, all_ranges, save_path=os.path.join(save_dir, "rti.png"))
+    plot_angle_time_intensity(all_times, all_azimuths, "Azimuth vs Time", "Azimuth (deg)", save_path=os.path.join(save_dir, "azimuth.png"))
+    plot_angle_time_intensity(all_times, all_elevations, "Elevation vs Time", "Elevation (deg)", save_path=os.path.join(save_dir, "elevation.png"))
+    plot_snr_vs_time_scatter(all_times, all_snrs, save_path=os.path.join(save_dir, "snr.png"))
 
-    plot_compare_velocity_range(all_times, all_velocities, time_axis, range_frames)
-    plot_compare_snr_range(all_times, all_snrs, time_axis, range_frames)
-    plot_compare_micro_doppler_range(all_times, all_velocities, time_axis, range_frames)
-    plot_compare_azimuth_range(all_times, all_azimuths, time_axis, range_frames)
-    plot_compare_elevation_range(all_times, all_elevations, time_axis, range_frames)
-    plot_compare_rti_range(all_times, all_ranges, time_axis, range_frames)
+    plot_compare_velocity_range(all_times, all_velocities, normalized_time, range_frames, save_path=os.path.join(save_dir, "comp_vel_range.png"))
+    plot_compare_snr_range(all_times, all_snrs, normalized_time, range_frames, save_path=os.path.join(save_dir, "comp_snr_range.png"))
+    plot_compare_micro_doppler_range(all_times, all_velocities, normalized_time, range_frames, save_path=os.path.join(save_dir, "comp_md_range.png"))
+    plot_compare_azimuth_range(all_times, all_azimuths, normalized_time, range_frames, save_path=os.path.join(save_dir, "comp_az_range.png"))
+    plot_compare_elevation_range(all_times, all_elevations, normalized_time, range_frames, save_path=os.path.join(save_dir, "comp_el_range.png"))
+    plot_compare_rti_range(all_times, all_ranges, normalized_time, range_frames, save_path=os.path.join(save_dir, "comp_rti_range.png"))
+    
+    print("All plots generated and saved successfully.")

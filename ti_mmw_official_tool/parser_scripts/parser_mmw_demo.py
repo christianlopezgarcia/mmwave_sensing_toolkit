@@ -2,32 +2,32 @@
 # * (C) Copyright 2020, Texas Instruments Incorporated. - www.ti.com
 # ****************************************************************************
 # *
-# *  Redistribution and use in source and binary forms, with or without
-# *  modification, are permitted provided that the following conditions are
-# *  met:
+# * Redistribution and use in source and binary forms, with or without
+# * modification, are permitted provided that the following conditions are
+# * met:
 # *
-# *    Redistributions of source code must retain the above copyright notice,
-# *    this list of conditions and the following disclaimer.
+# * Redistributions of source code must retain the above copyright notice,
+# * this list of conditions and the following disclaimer.
 # *
-# *    Redistributions in binary form must reproduce the above copyright
-# *    notice, this list of conditions and the following disclaimer in the
-# *     documentation and/or other materials provided with the distribution.
+# * Redistributions in binary form must reproduce the above copyright
+# * notice, this list of conditions and the following disclaimer in the
+# * documentation and/or other materials provided with the distribution.
 # *
-# *    Neither the name of Texas Instruments Incorporated nor the names of its
-# *    contributors may be used to endorse or promote products derived from
-# *    this software without specific prior written permission.
+# * Neither the name of Texas Instruments Incorporated nor the names of its
+# * contributors may be used to endorse or promote products derived from
+# * this software without specific prior written permission.
 # *
-# *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-# *  PARTICULAR TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-# *  A PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT  OWNER OR
-# *  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# *  EXEMPLARY, ORCONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# *  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-# *  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
-# *  LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY, OR TORT (INCLUDING
-# *  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-# *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+# * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+# * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# * PARTICULAR TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+# * A PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT  OWNER OR
+# * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# * EXEMPLARY, ORCONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# * LIABILITY, WHETHER IN CONTRACT,  STRICT LIABILITY, OR TORT (INCLUDING
+# * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # *
 
 # import the required Python packages
@@ -136,7 +136,7 @@ def parser_helper(data, readNumBytes):
     print("numTlv              = %d" % (numTlv))
     print("subFrameNumber      = %d" % (subFrameNumber))   
                               
-    return (headerStartIndex, totalPacketNumBytes, numDetObj, numTlv, subFrameNumber)
+    return (headerStartIndex, totalPacketNumBytes, numDetObj, numTlv, subFrameNumber,timeCpuCycles)
 
 
 def parser_one_mmw_demo_output_packet(data, readNumBytes):
@@ -181,7 +181,7 @@ def parser_one_mmw_demo_output_packet(data, readNumBytes):
     result = TC_PASS
 
     # call parser_helper() function to find the output packet header start location and packet size 
-    (headerStartIndex, totalPacketNumBytes, numDetObj, numTlv, subFrameNumber) = parser_helper(data, readNumBytes)
+    (headerStartIndex, totalPacketNumBytes, numDetObj, numTlv, subFrameNumber, timeCpuCycles) = parser_helper(data, readNumBytes)
                          
     if headerStartIndex == -1:
         result = TC_FAIL
@@ -302,7 +302,7 @@ def parser_one_mmw_demo_output_packet(data, readNumBytes):
             for obj in range(numDetObj):
                 print("    obj%3d: %12f %12f %12f %12f %12f %12f %12d %12d %12d" % (obj, detectedX_array[obj], detectedY_array[obj], detectedZ_array[obj], detectedV_array[obj], detectedRange_array[obj], detectedAzimuth_array[obj], detectedElevAngle_array[obj], detectedSNR_array[obj], detectedNoise_array[obj]))
 
-    return (result, headerStartIndex, totalPacketNumBytes, numDetObj, numTlv, subFrameNumber, detectedX_array, detectedY_array, detectedZ_array, detectedV_array, detectedRange_array, detectedAzimuth_array, detectedElevAngle_array, detectedSNR_array, detectedNoise_array)
+    return (result, headerStartIndex, totalPacketNumBytes, numDetObj, numTlv, subFrameNumber, detectedX_array, detectedY_array, detectedZ_array, detectedV_array, detectedRange_array, detectedAzimuth_array, detectedElevAngle_array, detectedSNR_array, detectedNoise_array, timeCpuCycles)
 
 
 

@@ -1,0 +1,4 @@
+[2026-04-02T00:20:16.822451+00:00] data capture started pid=1677
+[2026-04-02T00:20:16.822473+00:00] raw_bin=/home/david/radar_runs/run_2026-04-01_20-20-16/raw/run_2026-04-01_20-20-16.bin
+[2026-04-02T00:20:18.751619+00:00] config sent, capture active
+[2026-04-02T23:15:18.864125+00:00] run stopped
