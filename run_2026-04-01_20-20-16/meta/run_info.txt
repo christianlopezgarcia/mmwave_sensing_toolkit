@@ -1,0 +1,6 @@
+run_name=run_2026-04-01_20-20-16
+start_utc=2026-04-02T00:20:16.739396+00:00
+cli_port=/dev/ttyUSB0
+data_port=/dev/ttyUSB1
+cfg_file=/home/david/ti_radar/configs/door_metal_1fps.cfg
+host=radarpi
