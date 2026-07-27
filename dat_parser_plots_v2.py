@@ -255,8 +255,26 @@ def plot_compare_rti_range(all_times, all_ranges, save_path=None):
 
 if __name__ == "__main__":
     multiprocessing.freeze_support()
-    dat_file = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\run_2026-04-01_20-20-16\raw\run_2026-04-01_20-20-16.dat"
+    # dat_file = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\run_2026-04-01_20-20-16\raw\run_2026-04-01_20-20-16.dat"
     # dat_file = r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_02_26T06_17_54_793.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\xwr68xx_AOP_processed_stream_2026_04_22T00_21_57_344.dat"
+    # dat_file = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\dat_directory\walking_from_point1_to_point6\xwr68xx_AOP_processed_stream_2026_04_22T00_37_20_944.dat"
+    # dat_file = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\dat_directory\walking_point_1_to_point5_increment_of_5seconds\xwr68xx_AOP_processed_stream_2026_04_22T00_36_00_893.dat"
+    # dat_file = r"C:\Users\c1op3\Desktop\Occupations\Engineering Career\Ms_EEE\EEE_500\repo\mmwave_sensing_toolkit\dat_directory\walking_from_1_to_3\xwr68xx_AOP_processed_stream_2026_04_22T00_33_31_210.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\walking_left_right_cs_2nd_floor\xwr68xx_AOP_processed_stream_2026_04_23T22_59_09_726.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\BLOS_left_right_low\xwr68xx_AOP_processed_stream_2026_04_23T23_03_38_033.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\BLOS_left_right_low\xwr68xx_AOP_processed_stream_2026_04_23T23_03_38_033.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\BLOS_left_right_higher\xwr68xx_AOP_processed_stream_2026_04_23T23_05_23_531.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\wave_hand\xwr68xx_AOP_processed_stream_2026_04_23T23_11_14_590.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\walking_left_right_5th_floor_outside_of_lab_doors\xwr68xx_AOP_processed_stream_2026_04_23T23_29_02_862.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\changed settings\xwr68xx_AOP_processed_stream_2026_04_23T23_33_41_839.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\changed_settings_outside_door_left_right\xwr68xx_AOP_processed_stream_2026_04_23T23_40_36_236.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\changed_settings_outside_door_up_down\xwr68xx_AOP_processed_stream_2026_04_23T23_41_24_453.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\best_range_left_right_up_down\xwr68xx_AOP_processed_stream_2026_04_23T23_47_05_611.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\best_range_left_right_up_down_2ft_wall_lab\xwr68xx_AOP_processed_stream_2026_04_24T00_03_09_361.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\best_range_new_flash_left_right_up_down_lab_outside_lab_door\xwr68xx_AOP_processed_stream_2026_04_24T00_08_08_752.dat"
+    # dat_file = r"C:\Users\c1op3\Downloads\test4_plywood_triply\radar_at_4ft_infront_of_wall_professor_1ft_8ft\xwr68xx_AOP_processed_stream_2026_07_15T00_46_55_906.dat"
+    dat_file = r"repo\runs\run_20260725_092656\run_20260725_092656.dat"
     start_time = time.time()
     # 1. Parse
     f_points, f_vel, f_az, f_el, f_snr, f_cycles = parse_dat_file_parallel(dat_file)
